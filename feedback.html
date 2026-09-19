@@ -33,9 +33,8 @@ small{color:#89a1c2}
 <h1>Masukan & Dukungan</h1>
 <p>Laporkan bug, kendala, atau kirim saran untuk Coin Rush 3D melalui formulir resmi berikut.</p>
 
-<form action="https://formsubmit.co/marcelloartis@gmail.com" method="POST">
+<form id="feedback-form" novalidate>
   <input type="hidden" name="_subject" value="Coin Rush 3D - Masukan Baru">
-  <input type="hidden" name="_next" value="https://marcelloart.site/feedback-terkirim.html">
   <input type="hidden" name="_url" value="https://marcelloart.site/feedback.html">
   <input type="hidden" name="_template" value="table">
   <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off">
@@ -67,7 +66,8 @@ small{color:#89a1c2}
     <textarea name="Pesan" placeholder="Jelaskan masalah atau saran Anda..." maxlength="4000" required></textarea>
   </label>
 
-  <button type="submit">KIRIM MASUKAN</button>
+  <div id="form-status" role="status" aria-live="polite" style="display:none;padding:13px 15px;border-radius:12px;font-weight:800"></div>
+  <button id="submit-feedback" type="submit">KIRIM MASUKAN</button>
 </form>
 
 <div class="note">
@@ -77,5 +77,50 @@ Masukan yang dikirim melalui formulir ini akan diteruskan ke email resmi develop
 <p><a href="/">← Kembali ke situs Coin Rush 3D</a></p>
 <small>© 2026 MarcelloArt · Coin Rush 3D</small>
 </section>
-</main></body>
+</main>
+<script>
+const form=document.getElementById('feedback-form');
+const button=document.getElementById('submit-feedback');
+const statusBox=document.getElementById('form-status');
+
+function showStatus(message,ok){
+  statusBox.textContent=message;
+  statusBox.style.display='block';
+  statusBox.style.background=ok?'#123f32':'#4a2028';
+  statusBox.style.color=ok?'#9ff5c7':'#ffc2ca';
+  statusBox.style.border=ok?'1px solid #35d68a55':'1px solid #ff6b7a55';
+}
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(!form.reportValidity())return;
+  button.disabled=true;
+  button.textContent='MENGIRIM...';
+  statusBox.style.display='none';
+
+  const payload={};
+  new FormData(form).forEach((value,key)=>payload[key]=value);
+
+  try{
+    const response=await fetch('https://formsubmit.co/ajax/marcelloartis@gmail.com',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||data.success===false){
+      throw new Error(data.message||'Pengiriman gagal');
+    }
+    form.reset();
+    showStatus('✓ Masukan berhasil dikirim. Terima kasih!',true);
+  }catch(error){
+    showStatus('Masukan belum dapat dikirim. Silakan coba lagi beberapa saat.',false);
+    console.error('Feedback submit error:',error);
+  }finally{
+    button.disabled=false;
+    button.textContent='KIRIM MASUKAN';
+  }
+});
+</script>
+</body>
 </html>
