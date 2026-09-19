@@ -707,3 +707,60 @@ textarea{min-height:175px;resize:vertical}
   .gameplay-track{transition:none!important}
   .gameplay-nav,.gameplay-dots button{transition:none!important}
 }
+
+
+/* ===== Blog thumbnail sizing v2 ===== */
+.blog-list .post-card{
+  overflow:hidden;
+}
+.blog-list .post-thumb{
+  width:100%;
+  height:clamp(190px,18vw,260px);
+  aspect-ratio:auto;
+  object-fit:cover;
+  object-position:center;
+  flex:0 0 auto;
+  margin-bottom:18px;
+}
+.news-featured .post-thumb{
+  width:100%;
+  height:clamp(220px,24vw,340px);
+  aspect-ratio:auto;
+  object-fit:cover;
+  object-position:center;
+}
+.news-side .post-thumb{
+  width:100%;
+  height:180px;
+  aspect-ratio:auto;
+  object-fit:cover;
+  object-position:center;
+}
+@media(max-width:900px){
+  .blog-list .post-thumb{
+    height:220px;
+  }
+  .news-featured .post-thumb{
+    height:240px;
+  }
+  .news-side .post-thumb{
+    height:190px;
+  }
+}
+@media(max-width:680px){
+  .blog-list .post-card{
+    padding:14px;
+  }
+  .blog-list .post-thumb{
+    height:auto;
+    aspect-ratio:16/9;
+    max-height:220px;
+    border-radius:16px;
+  }
+  .news-featured .post-thumb,
+  .news-side .post-thumb{
+    height:auto;
+    aspect-ratio:16/9;
+    max-height:230px;
+  }
+}
