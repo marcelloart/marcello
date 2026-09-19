@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">5 Power-Up Coin Rush 3D</title>
+<desc id="desc">Panduan Shield, Magnet, Extra Life, Time Boost dan Dash di Coin Rush 3D.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#07152b"/>
+    <stop offset=".55" stop-color="#0d2142"/>
+    <stop offset="1" stop-color="#07101f"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffe56f"/>
+    <stop offset="1" stop-color="#ff9f26"/>
+  </linearGradient>
+  <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#62ddff"/>
+    <stop offset="1" stop-color="#4b7cff"/>
+  </linearGradient>
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="18"/>
+  </filter>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<circle cx="1030" cy="85" r="240" fill="#4b7cff" opacity=".12" filter="url(#glow)"/>
+<circle cx="145" cy="630" r="250" fill="#62ddff" opacity=".08" filter="url(#glow)"/>
+<path d="M0 520 C240 460 360 580 620 520 C850 468 1000 500 1200 420 V675 H0Z" fill="#07101f" opacity=".58"/>
+<text x="76" y="88" fill="#62ddff" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="800" letter-spacing="5">COIN RUSH 3D · PANDUAN</text>
+<text x="76" y="176" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="72" font-weight="900">POWER-UP</text>
+<text x="76" y="246" fill="url(#gold)" font-family="Arial,Helvetica,sans-serif" font-size="65" font-weight="900">PAKAI DI MOMEN TEPAT</text>
+<text x="79" y="296" fill="#a9bad0" font-family="Arial,Helvetica,sans-serif" font-size="24">Shield · Extra Life · Magnet · Time Boost · Dash</text>
+
+<g transform="translate(76 350)">
+  <g>
+    <rect width="190" height="180" rx="28" fill="#102343" stroke="#2e527f" stroke-width="3"/>
+    <path d="M95 34 L135 50 V92 C135 120 118 139 95 150 C72 139 55 120 55 92 V50Z" fill="url(#cyan)" opacity=".95"/>
+    <text x="95" y="169" text-anchor="middle" fill="#dff9ff" font-family="Arial" font-size="19" font-weight="800">SHIELD</text>
+  </g>
+  <g transform="translate(210)">
+    <rect width="190" height="180" rx="28" fill="#102343" stroke="#2e527f" stroke-width="3"/>
+    <text x="95" y="115" text-anchor="middle" fill="#ff6e88" font-family="Arial" font-size="76" font-weight="900">♥+</text>
+    <text x="95" y="169" text-anchor="middle" fill="#fff" font-family="Arial" font-size="19" font-weight="800">EXTRA LIFE</text>
+  </g>
+  <g transform="translate(420)">
+    <rect width="190" height="180" rx="28" fill="#102343" stroke="#2e527f" stroke-width="3"/>
+    <path d="M58 54 V104 C58 132 132 132 132 104 V54" fill="none" stroke="#ff5757" stroke-width="25" stroke-linecap="square"/>
+    <path d="M58 54 H80 M110 54 H132" stroke="#d6f7ff" stroke-width="25"/>
+    <text x="95" y="169" text-anchor="middle" fill="#fff" font-family="Arial" font-size="19" font-weight="800">MAGNET</text>
+  </g>
+  <g transform="translate(630)">
+    <rect width="190" height="180" rx="28" fill="#102343" stroke="#2e527f" stroke-width="3"/>
+    <circle cx="95" cy="89" r="44" fill="none" stroke="#62ddff" stroke-width="8"/>
+    <path d="M95 89 V58 M95 89 L119 102" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <path d="M78 35 H112" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <text x="95" y="169" text-anchor="middle" fill="#fff" font-family="Arial" font-size="19" font-weight="800">TIME BOOST</text>
+  </g>
+  <g transform="translate(840)">
+    <rect width="190" height="180" rx="28" fill="#102343" stroke="#2e527f" stroke-width="3"/>
+    <path d="M104 31 L61 97 H92 L78 146 L135 75 H103Z" fill="url(#gold)"/>
+    <text x="95" y="169" text-anchor="middle" fill="#fff" font-family="Arial" font-size="19" font-weight="800">DASH</text>
+  </g>
+</g>
+</svg>
