@@ -359,3 +359,35 @@ body:after{
 .latest-post{margin-top:26px}
 .latest-post .post-card{min-height:0}
 @media(max-width:760px){.blog-list{grid-template-columns:1fr}.blog-hero{padding-top:50px}}
+
+.post-thumb{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:18px;
+  margin:0 0 18px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 16px 42px rgba(0,0,0,.22);
+  background:#0b1d38;
+}
+.post-card:hover .post-thumb{transform:scale(1.012);filter:brightness(1.05)}
+.post-thumb{transition:transform .28s ease,filter .28s ease}
+.article-featured-image{
+  margin:28px auto 8px;
+  max-width:900px;
+}
+.article-featured-image img{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 28px 85px rgba(0,0,0,.38),0 0 60px rgba(58,119,255,.08);
+  background:#0b1d38;
+}
+@media(max-width:560px){
+  .article-featured-image img{border-radius:18px}
+  .post-thumb{border-radius:14px}
+}
