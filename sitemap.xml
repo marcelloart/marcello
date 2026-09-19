@@ -138,4 +138,14 @@
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
+  <url>
+    <loc>https://marcelloart.site/blog/cara-mengatasi-coin-rush-3d-tidak-bisa-diinstal-update-android.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://marcelloart.site/assets/blog/coin-rush-3d-closed-testing-cover.webp</image:loc>
+      <image:title>Cara Mengatasi Coin Rush 3D Tidak Bisa Diinstal atau Diupdate di Android</image:title>
+    </image:image>
+  </url>
 </urlset>
