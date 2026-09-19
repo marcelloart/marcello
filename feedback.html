@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Coin Rush 3D — Masukan & Dukungan</title>
-<meta name="description" content="Halaman resmi masukan dan dukungan untuk Coin Rush 3D.">
+<meta name="description" content="Kirim masukan, laporan bug, dan saran untuk Coin Rush 3D.">
 <style>
 :root{color-scheme:dark}
 *{box-sizing:border-box}
@@ -13,36 +13,65 @@ main{max-width:820px;margin:auto;padding:56px 22px}
 .card{background:#0b1d38e8;border:1px solid #ffffff20;border-radius:26px;padding:34px;box-shadow:0 22px 60px #0007}
 .badge{display:inline-block;background:#1c4a7d;border:1px solid #6ad8ff55;padding:7px 12px;border-radius:999px;font-weight:800;font-size:13px}
 h1{font-size:clamp(36px,8vw,58px);line-height:1.02;margin:14px 0 12px;color:#ffd84a;letter-spacing:-1px}
-h2{margin-top:30px}
-p,li{color:#cfddf2;line-height:1.7}
+p{color:#cfddf2;line-height:1.7}
+form{display:grid;gap:14px;margin-top:24px}
+label{font-weight:800;color:#e9f5ff}
+input,select,textarea{width:100%;margin-top:7px;padding:14px 15px;border-radius:14px;border:1px solid #ffffff25;background:#10294b;color:#fff;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#70e5ff;box-shadow:0 0 0 3px #70e5ff20}
+textarea{min-height:170px;resize:vertical}
+button{border:0;border-radius:14px;padding:15px 20px;background:linear-gradient(180deg,#ffcf3d,#ff9d16);color:#402300;font-weight:950;font-size:16px;cursor:pointer;box-shadow:0 6px 0 #a95800}
+button:active{transform:translateY(3px);box-shadow:0 3px 0 #a95800}
 a{color:#70e5ff}
-.box{background:#10294b;border:1px solid #ffffff15;border-radius:18px;padding:18px;margin-top:16px}
-.button{display:inline-block;margin-top:10px;padding:13px 18px;border-radius:14px;background:linear-gradient(180deg,#ffcf3d,#ff9d16);color:#402300;text-decoration:none;font-weight:900;box-shadow:0 6px 0 #a95800}
+.note{margin-top:18px;padding:14px 16px;border-radius:14px;background:#10294b;color:#b9cbe3;font-size:13px;line-height:1.55}
 small{color:#89a1c2}
+.honey{position:absolute;left:-9999px;opacity:0;pointer-events:none}
 </style>
 </head>
 <body><main>
 <section class="card">
 <span class="badge">COIN RUSH 3D</span>
 <h1>Masukan & Dukungan</h1>
-<p>Terima kasih sudah memainkan Coin Rush 3D. Masukan Anda membantu kami memperbaiki gameplay, performa, kontrol, visual, dan fitur game.</p>
+<p>Laporkan bug, kendala, atau kirim saran untuk Coin Rush 3D melalui formulir resmi berikut.</p>
 
-<div class="box">
-<h2>Kirim masukan</h2>
-<p>Untuk melaporkan bug, kendala, atau memberi saran, gunakan halaman GitHub Issues resmi MarcelloArt.</p>
-<a class="button" href="https://github.com/marcelloart/marcello/issues/new?title=Coin%20Rush%203D%20-%20Masukan&body=Versi%20game%3A%201.0.0%0APerangkat%3A%20%0ADeskripsi%20masalah%20atau%20saran%3A%20%0ALangkah%20untuk%20mengulangi%20masalah%20(jika%20ada)%3A%20" rel="noopener">KIRIM MASUKAN</a>
-</div>
+<form action="https://formsubmit.co/marcelloartis@gmail.com" method="POST">
+  <input type="hidden" name="_subject" value="Coin Rush 3D - Masukan Baru">
+  <input type="hidden" name="_next" value="https://marcelloart.site/feedback-terkirim.html">
+  <input type="hidden" name="_url" value="https://marcelloart.site/feedback.html">
+  <input type="hidden" name="_template" value="table">
+  <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off">
 
-<div class="box">
-<h2>Informasi yang membantu</h2>
-<ul>
-<li>Versi Coin Rush 3D yang digunakan</li>
-<li>Merek dan model perangkat</li>
-<li>Versi Android</li>
-<li>Level saat masalah terjadi</li>
-<li>Langkah untuk mengulangi masalah</li>
-<li>Screenshot jika tersedia</li>
-</ul>
+  <label>Nama
+    <input type="text" name="Nama" placeholder="Nama Anda" maxlength="100" required>
+  </label>
+
+  <label>Email
+    <input type="email" name="email" placeholder="nama@email.com" maxlength="160" required>
+  </label>
+
+  <label>Jenis masukan
+    <select name="Jenis Masukan" required>
+      <option value="">Pilih jenis masukan</option>
+      <option>Bug / masalah game</option>
+      <option>Saran fitur</option>
+      <option>Masalah iklan</option>
+      <option>Masalah performa</option>
+      <option>Lainnya</option>
+    </select>
+  </label>
+
+  <label>Perangkat (opsional)
+    <input type="text" name="Perangkat" placeholder="Contoh: Samsung Galaxy A55, Android 16" maxlength="160">
+  </label>
+
+  <label>Pesan
+    <textarea name="Pesan" placeholder="Jelaskan masalah atau saran Anda..." maxlength="4000" required></textarea>
+  </label>
+
+  <button type="submit">KIRIM MASUKAN</button>
+</form>
+
+<div class="note">
+Masukan yang dikirim melalui formulir ini akan diteruskan ke email resmi developer Coin Rush 3D. Jangan sertakan password, PIN, atau informasi sensitif lainnya.
 </div>
 
 <p><a href="/">← Kembali ke situs Coin Rush 3D</a></p>
