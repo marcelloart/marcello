@@ -411,3 +411,27 @@ textarea{min-height:175px;resize:vertical}
   .btn,.card,.post-thumb{transition:none}
   .btn:hover,.card:hover{transform:none}
 }
+
+
+/* ===== Cache-safe layout guard ===== */
+.home-hero,.game-showcase,.news-grid,.news-side,.hero-stats,.feature-grid{min-width:0}
+.game-showcase{display:block;position:relative}
+.game-showcase .runner,.game-showcase .coin,.game-showcase .game-path,.game-showcase .showcase-top,.game-showcase .world-chip,.game-showcase .showcase-badge{position:absolute}
+.news-side .feature-card{position:relative}
+.hero-stats>*{min-width:0}
+@media(max-width:680px){
+  .home-hero{display:flex;flex-direction:column}
+  .hero-copy,.game-showcase{width:100%}
+  .hero-note{line-height:1.5}
+  .hero-stats{width:100%}
+  .hero-stat{min-height:88px}
+  .section-head{width:100%}
+  .section-head>*{max-width:100%}
+  .nav-links{max-width:56vw}
+}
+@media(max-width:430px){
+  .nav-links a{padding:8px 9px}
+  .hero-title{font-size:48px}
+  .hero-desc{font-size:16px}
+  .game-showcase{min-height:390px}
+}
