@@ -5,32 +5,57 @@
     const links = inner?.querySelector('.nav-links');
     if (!nav || !inner || !links || nav.dataset.menuReady === 'true') return;
 
-    const items = [
-      ['Beranda', '/'],
-      ['Game', '/coin-rush-3d/'],
-      ['Gameplay', '/#gameplay'],
-      ['Blog', '/blog/'],
-      ['Tentang', '/about.html'],
-      ['Kontak', '/contact.html'],
+    const currentPath = location.pathname.replace(/index\.html$/, '');
+    const isPath = (href) => {
+      const targetPath = new URL(href, location.origin).pathname.replace(/index\.html$/, '');
+      return (href === '/' && currentPath === '/') ||
+        (href !== '/' && !href.includes('#') && currentPath === targetPath);
+    };
+
+    const testingChildren = [
       ['Status Pengujian', '/status-pengujian.html'],
       ['Closed Testing', '/pengujian-tertutup.html'],
-      ['Changelog', '/changelog.html'],
-      ['Privasi', '/privacy-policy.html'],
-      ['Cookies', '/cookie-policy.html'],
-      ['Terms', '/terms-of-service.html'],
-      ['Disclaimer', '/disclaimer.html']
+      ['Changelog', '/changelog.html']
+    ];
+    const testingActive = testingChildren.some(([,href]) => isPath(href));
+
+    const primaryItems = [
+      ['Beranda', '/'],
+      ['Game', '/coin-rush-3d/'],
+      ['Blog', '/blog/']
     ];
 
-    const currentPath = location.pathname.replace(/index\.html$/, '');
-    links.innerHTML = items.map(([label, href]) => {
-      const targetPath = new URL(href, location.origin).pathname.replace(/index\.html$/, '');
-      const active = (href === '/' && currentPath === '/') ||
-        (href !== '/' && !href.includes('#') && currentPath === targetPath);
-      return '<a href="' + href + '"' + (active ? ' class="active"' : '') + '>' + label + '</a>';
-    }).join('');
+    const secondaryItems = [
+      ['Tentang', '/about.html'],
+      ['Dukungan', '/feedback.html']
+    ];
+
+    const linkHtml = ([label, href]) =>
+      '<a href="' + href + '"' + (isPath(href) ? ' class="active"' : '') + '>' + label + '</a>';
+
+    links.innerHTML =
+      primaryItems.map(linkHtml).join('') +
+      '<div class="nav-group' + (testingActive ? ' is-expanded' : '') + '">' +
+        '<button class="nav-group-toggle' + (testingActive ? ' active' : '') + '" type="button" aria-expanded="' + String(testingActive) + '">' +
+          '<span>Pengujian</span><span class="nav-group-chevron" aria-hidden="true">⌄</span>' +
+        '</button>' +
+        '<div class="nav-submenu">' +
+          testingChildren.map(linkHtml).join('') +
+        '</div>' +
+      '</div>' +
+      secondaryItems.map(linkHtml).join('');
 
     links.id = 'site-menu';
     links.setAttribute('aria-label', 'Menu utama');
+
+    const testingGroup = links.querySelector('.nav-group');
+    const testingToggle = links.querySelector('.nav-group-toggle');
+    testingToggle?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const expanded = !testingGroup.classList.contains('is-expanded');
+      testingGroup.classList.toggle('is-expanded', expanded);
+      testingToggle.setAttribute('aria-expanded', String(expanded));
+    });
 
     const button = document.createElement('button');
     button.type = 'button';
