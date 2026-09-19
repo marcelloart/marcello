@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="t d">
+<title id="t">Coin Rush 3D Closed Testing v1.0.0</title>
+<desc id="d">Featured image for the Coin Rush 3D closed testing development update.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061a3d"/><stop offset=".48" stop-color="#0b5ec9"/><stop offset="1" stop-color="#52c6ff"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3a2"/><stop offset=".35" stop-color="#ffd447"/><stop offset="1" stop-color="#f28b00"/></linearGradient>
+  <linearGradient id="path" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ddba82"/><stop offset="1" stop-color="#a96535"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1200" height="675" rx="34" fill="url(#bg)"/>
+<circle cx="1030" cy="110" r="210" fill="#6ee7ff" opacity=".14"/>
+<circle cx="1020" cy="120" r="125" fill="#fff" opacity=".06"/>
+<path d="M760 675 L970 292 L1200 330 L1200 675Z" fill="url(#path)"/>
+<path d="M873 675 L1008 312 L1096 325 L1028 675Z" fill="#f0d09d" opacity=".32"/>
+<g opacity=".9">
+  <circle cx="965" cy="385" r="39" fill="url(#gold)" stroke="#ffe879" stroke-width="7"/>
+  <text x="965" y="399" text-anchor="middle" font-size="42" font-family="Arial,sans-serif" font-weight="900" fill="#b86b00">★</text>
+  <circle cx="1045" cy="452" r="31" fill="url(#gold)" stroke="#ffe879" stroke-width="6"/>
+  <text x="1045" y="463" text-anchor="middle" font-size="32" font-family="Arial,sans-serif" font-weight="900" fill="#b86b00">★</text>
+  <circle cx="1116" cy="518" r="25" fill="url(#gold)" stroke="#ffe879" stroke-width="5"/>
+  <text x="1116" y="527" text-anchor="middle" font-size="25" font-family="Arial,sans-serif" font-weight="900" fill="#b86b00">★</text>
+</g>
+<g transform="translate(835 395)">
+  <circle cx="0" cy="0" r="34" fill="#e0ab82"/><path d="M-30 -8 Q0 -46 30 -8 L27 -30 Q0 -52 -27 -30Z" fill="#152039"/>
+  <rect x="-42" y="34" width="84" height="100" rx="24" fill="#2495ff"/>
+  <rect x="-31" y="126" width="28" height="88" rx="12" fill="#172642"/><rect x="5" y="126" width="28" height="88" rx="12" fill="#172642"/>
+  <rect x="-43" y="205" width="50" height="22" rx="11" fill="#f7fbff"/><rect x="-6" y="205" width="50" height="22" rx="11" fill="#f7fbff"/>
+</g>
+<g filter="url(#glow)" opacity=".8"><path d="M720 545 C850 500 1020 515 1180 560" fill="none" stroke="#6fe5ff" stroke-width="10"/><path d="M740 580 C875 535 1035 550 1170 595" fill="none" stroke="#fff" stroke-width="3"/></g>
+<rect x="64" y="62" width="288" height="54" rx="15" fill="#0d4aa5" stroke="#59d8ff" stroke-width="2"/>
+<text x="208" y="96" text-anchor="middle" fill="#dff8ff" font-family="Arial,sans-serif" font-weight="900" font-size="23" letter-spacing="2">DEVELOPMENT UPDATE</text>
+<text x="64" y="250" fill="url(#gold)" font-family="Arial,sans-serif" font-size="92" font-weight="900" letter-spacing="-4">COIN RUSH 3D</text>
+<text x="66" y="326" fill="#fff" font-family="Arial,sans-serif" font-size="46" font-weight="800">Closed Testing v1.0.0</text>
+<text x="66" y="376" fill="#bfe4ff" font-family="Arial,sans-serif" font-size="24">100 level • 10 dunia • checkpoint challenge</text>
+<rect x="66" y="422" width="410" height="1" fill="#7fdfff" opacity=".45"/>
+<text x="66" y="475" fill="#e7f3ff" font-family="Arial,sans-serif" font-size="22" font-weight="700">TEST • FEEDBACK • IMPROVE</text>
+<text x="66" y="518" fill="#93caff" font-family="Arial,sans-serif" font-size="18">MarcelloArt Game Studio</text>
+</svg>
