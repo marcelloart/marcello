@@ -3,41 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071124">
 <title>MarcelloArt — Coin Rush 3D</title>
-<meta name="description" content="Official developer website for Coin Rush 3D by MarcelloArt.">
-<style>
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 50% 0,#15396a 0,#081a34 42%,#051225 100%);color:#f4f8ff;min-height:100vh}
-main{max-width:900px;margin:auto;padding:60px 22px}
-.card{background:#0b1d38e8;border:1px solid #ffffff20;border-radius:26px;padding:34px;box-shadow:0 22px 60px #0007}
-.badge{display:inline-block;background:#1c4a7d;border:1px solid #6ad8ff55;padding:7px 12px;border-radius:999px;font-weight:800;font-size:13px}
-h1{font-size:clamp(44px,9vw,76px);line-height:.98;margin:14px 0 12px;color:#ffd84a;letter-spacing:-2px}
-h2{margin-top:32px}
-p,li{color:#cfddf2;line-height:1.7}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:24px}
-.box{background:#10294b;border:1px solid #ffffff15;border-radius:18px;padding:18px}
-a{color:#70e5ff}
-footer{margin-top:30px;color:#89a1c2;font-size:13px}
-</style>
+<meta name="description" content="Situs resmi Coin Rush 3D oleh MarcelloArt. Kumpulkan koin, hindari rintangan, gunakan power-up, dan taklukkan 100 level.">
+<link rel="stylesheet" href="/styles.css">
 </head>
-<body><main>
-<section class="card">
-<span class="badge">OFFICIAL DEVELOPER WEBSITE</span>
-<h1>Coin Rush 3D</h1>
-<p>Game mobile 3D dari MarcelloArt. Kumpulkan koin, hindari rintangan, gunakan power-up, dan selesaikan 100 level dalam 10 dunia.</p>
-<div class="grid">
-<div class="box"><strong>Android</strong><p>Package<br><code>com.marcelloart.coinrush3d</code></p></div>
-<div class="box"><strong>Release</strong><p>Coin Rush 3D<br>v1.0.0</p></div>
-<div class="box"><strong>Advertising</strong><p>Google AdMob<br>Rewarded Ads</p></div>
-</div>
-<h2>Privasi</h2>
-<p><a href="/privacy-policy.html">Kebijakan Privasi Coin Rush 3D</a></p>
-<h2>Masukan & Dukungan</h2>
-<p><a href="/feedback.html">Kirim masukan tentang Coin Rush 3D</a></p>
-<h2>Authorized Digital Sellers</h2>
-<p><a href="/app-ads.txt">Lihat app-ads.txt</a></p>
-<footer>© 2026 MarcelloArt · Coin Rush 3D</footer>
-</section>
-</main></body>
+<body>
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>GAME STUDIO</small></span></a>
+    <div class="nav-links">
+      <a href="#fitur">Fitur</a>
+      <a href="/privacy-policy.html">Privasi</a>
+      <a class="keep" href="/feedback.html">Dukungan</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Coin Rush 3D · Android</span>
+      <h1>Kejar koin.<br><span class="gradient-text">Taklukkan dunia.</span></h1>
+      <p class="lead">Game runner 3D dari MarcelloArt dengan 100 level, checkpoint challenge, power-up, misi, hadiah harian, dan rintangan yang semakin menantang.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#fitur">Jelajahi Game ↓</a>
+        <a class="btn btn-secondary" href="/feedback.html">Kirim Masukan</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>100</b><span>Level</span></div>
+        <div class="stat"><b>10</b><span>Dunia</span></div>
+        <div class="stat"><b>10×</b><span>Checkpoint</span></div>
+        <div class="stat"><b>3</b><span>Mode grafis</span></div>
+      </div>
+    </div>
+
+    <div class="hero-card" aria-label="Ilustrasi gameplay Coin Rush 3D">
+      <div class="game-ui"><span class="pill">🪙 93</span><span class="pill">LEVEL 5 · 38s</span><span class="pill">Ⅱ</span></div>
+      <div class="coin c1"></div><div class="coin c2"></div><div class="coin c3"></div>
+      <div class="runner"><i class="head"></i><i class="body"></i><i class="leg l"></i><i class="leg r"></i></div>
+      <span class="pill world-pill">🌲 HUTAN HIJAU</span>
+    </div>
+  </section>
+
+  <section class="section" id="fitur">
+    <div class="section-head">
+      <div><span class="eyebrow">FITUR GAME</span><h2 style="margin-top:13px">Lebih dari sekadar mengumpulkan koin.</h2></div>
+      <p class="section-copy">Setiap dunia menghadirkan progres, tantangan, dan power-up yang membuat permainan terus berkembang.</p>
+    </div>
+    <div class="grid">
+      <article class="card"><span class="icon">🪙</span><h3>100 Level</h3><p>Kumpulkan target koin sebelum waktu habis dan hadapi rintangan yang semakin sulit.</p></article>
+      <article class="card"><span class="icon">🏁</span><h3>Checkpoint Challenge</h3><p>Setiap 10 level menghadirkan checkpoint dengan tantangan yang lebih intens.</p></article>
+      <article class="card"><span class="icon">⚡</span><h3>Power-up</h3><p>Gunakan Dash, Shield, Magnet, Extra Life, dan Time Boost pada saat yang tepat.</p></article>
+      <article class="card"><span class="icon">🎁</span><h3>Hadiah Harian</h3><p>Kembali bermain untuk mengambil hadiah dan memperkuat progres perjalanan.</p></article>
+      <article class="card"><span class="icon">🎯</span><h3>Misi & Pencapaian</h3><p>Selesaikan target permainan, kumpulkan hadiah, dan kejar berbagai pencapaian.</p></article>
+      <article class="card"><span class="icon">🎨</span><h3>Grafis Fleksibel</h3><p>Pilih kualitas Rendah, Sedang, atau Tinggi agar permainan nyaman di berbagai perangkat.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="cta">
+      <div><span class="eyebrow">PLAYER SUPPORT</span><h2 style="margin-top:13px">Ada bug atau punya ide?</h2><p>Kirim masukan langsung kepada developer Coin Rush 3D melalui formulir dukungan resmi.</p></div>
+      <a class="btn btn-primary" href="/feedback.html">Buka Dukungan →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-row">
+    <div><strong style="color:#fff">MarcelloArt</strong><br>© 2026 Coin Rush 3D · <code>com.marcelloart.coinrush3d</code></div>
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Kebijakan Privasi</a>
+      <a href="/feedback.html">Masukan & Dukungan</a>
+      <a href="/app-ads.txt">app-ads.txt</a>
+    </div>
+  </div>
+</footer>
+</body>
 </html>
