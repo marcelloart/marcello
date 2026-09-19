@@ -10,11 +10,15 @@
       ['Game', '/coin-rush-3d/'],
       ['Gameplay', '/#gameplay'],
       ['Blog', '/blog/'],
+      ['Tentang', '/about.html'],
+      ['Kontak', '/contact.html'],
       ['Status Pengujian', '/status-pengujian.html'],
       ['Closed Testing', '/pengujian-tertutup.html'],
       ['Changelog', '/changelog.html'],
-      ['Dukungan', '/feedback.html'],
-      ['Privasi', '/privacy-policy.html']
+      ['Privasi', '/privacy-policy.html'],
+      ['Cookies', '/cookie-policy.html'],
+      ['Terms', '/terms-of-service.html'],
+      ['Disclaimer', '/disclaimer.html']
     ];
 
     const currentPath = location.pathname.replace(/index\.html$/, '');
@@ -59,6 +63,20 @@
         button.focus();
       }
     });
+
+    const footerLinks = document.querySelector('.footer-links');
+    if (footerLinks) {
+      footerLinks.innerHTML = [
+        ['Game','/coin-rush-3d/'],
+        ['Blog','/blog/'],
+        ['Tentang','/about.html'],
+        ['Kontak','/contact.html'],
+        ['Privasi','/privacy-policy.html'],
+        ['Cookies','/cookie-policy.html'],
+        ['Ketentuan','/terms-of-service.html'],
+        ['Disclaimer','/disclaimer.html']
+      ].map(([label,href]) => '<a href="' + href + '">' + label + '</a>').join('');
+    }
 
     nav.classList.add('nav-enhanced');
     nav.dataset.menuReady = 'true';
