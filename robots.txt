@@ -3,3 +3,5 @@ Allow: /
 
 User-agent: Google-adstxt
 Allow: /app-ads.txt
+
+Sitemap: https://marcelloart.site/sitemap.xml
