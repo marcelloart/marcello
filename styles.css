@@ -1128,11 +1128,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 .nav-group.is-expanded .nav-group-chevron{transform:rotate(180deg)}
 .nav-submenu{
-  display:grid;grid-template-rows:0fr;opacity:0;
-  transition:grid-template-rows .2s ease,opacity .18s ease
+  display:grid;
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:max-height .22s ease,opacity .18s ease,visibility .18s ease
 }
-.nav-submenu>*{overflow:hidden}
-.nav-group.is-expanded .nav-submenu{grid-template-rows:1fr;opacity:1}
+.nav-group.is-expanded .nav-submenu{
+  max-height:180px;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto
+}
 .nav-submenu a{
   margin-left:12px!important;min-height:40px!important;padding:9px 12px 9px 18px!important;
   font-size:13px!important;color:#9fb2c9!important;position:relative
