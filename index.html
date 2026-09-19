@@ -16,7 +16,7 @@
 <meta property="og:url" content="https://marcelloart.site/">
 <meta property="og:image" content="https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/styles.css?v=20260919-2115">
+<link rel="stylesheet" href="/styles.css?v=20260919-2135">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -63,13 +63,46 @@
     </div>
   </div>
 
-  <figure class="gameplay-frame" id="gameplay">
-    <img src="/assets/gameplay/coin-rush-gameplay.webp" alt="Gameplay asli Coin Rush 3D di Android" width="960" height="540" fetchpriority="high">
-    <figcaption>
-      <span><b>GAMEPLAY ASLI</b> · Hutan Hijau</span>
-      <span>Android · Landscape</span>
-    </figcaption>
-  </figure>
+  <div class="gameplay-frame gameplay-carousel" id="gameplay" data-gameplay-carousel aria-label="Galeri gameplay Coin Rush 3D" tabindex="0">
+    <div class="gameplay-viewport">
+      <div class="gameplay-track">
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-menu.svg" alt="Menu utama Coin Rush 3D" width="776" height="1536" fetchpriority="high">
+          <figcaption><b>Menu Utama</b><span>Mulai berlari, hadiah harian, misi, dan toko.</span></figcaption>
+        </figure>
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-run.svg" alt="Gameplay berlari Coin Rush 3D" width="772" height="1536" loading="lazy">
+          <figcaption><b>Gameplay</b><span>Kejar target koin sebelum waktu habis.</span></figcaption>
+        </figure>
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-daily-reward.svg" alt="Hadiah harian Coin Rush 3D" width="420" height="835" loading="lazy">
+          <figcaption><b>Hadiah Harian</b><span>Login reward 7 hari dengan koin dan power-up.</span></figcaption>
+        </figure>
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-shop-power.svg" alt="Toko power-up Coin Rush 3D" width="420" height="836" loading="lazy">
+          <figcaption><b>Toko Power-up</b><span>Shield, Extra Life, Magnet, dan Time Boost.</span></figcaption>
+        </figure>
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-shop-outfit.svg" alt="Toko outfit Coin Rush 3D" width="420" height="833" loading="lazy">
+          <figcaption><b>Outfit</b><span>Kustomisasi karakter dengan outfit yang bisa dibuka.</span></figcaption>
+        </figure>
+        <figure class="gameplay-slide">
+          <img src="/assets/gameplay/gameplay-missions.svg" alt="Misi dan prestasi Coin Rush 3D" width="420" height="836" loading="lazy">
+          <figcaption><b>Misi &amp; Prestasi</b><span>Target tambahan dan reward koin untuk progres.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+    <button class="gameplay-nav gameplay-prev" type="button" aria-label="Gameplay sebelumnya">‹</button>
+    <button class="gameplay-nav gameplay-next" type="button" aria-label="Gameplay berikutnya">›</button>
+    <div class="gameplay-dots" aria-label="Pilih gambar gameplay">
+      <button class="is-active" type="button" data-slide="0" aria-label="Gambar gameplay 1" aria-current="true"></button>
+      <button type="button" data-slide="1" aria-label="Gambar gameplay 2"></button>
+      <button type="button" data-slide="2" aria-label="Gambar gameplay 3"></button>
+      <button type="button" data-slide="3" aria-label="Gambar gameplay 4"></button>
+      <button type="button" data-slide="4" aria-label="Gambar gameplay 5"></button>
+      <button type="button" data-slide="5" aria-label="Gambar gameplay 6"></button>
+    </div>
+  </div>
 </section>
 
 <section class="hero-stats" aria-label="Statistik Coin Rush 3D">
@@ -198,5 +231,6 @@
     <div class="footer-links"><a href="/blog/">Blog</a><a href="/privacy-policy.html">Kebijakan Privasi</a><a href="/feedback.html">Dukungan</a><a href="/app-ads.txt">app-ads.txt</a></div>
   </div>
 </footer>
+<script src="/gameplay-slider.js?v=20260919-2135" defer></script>
 </body>
 </html>
