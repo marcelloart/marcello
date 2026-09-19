@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Daftar Pengujian Tertutup Coin Rush 3D">
 <meta name="twitter:description" content="Daftarkan email untuk mendapatkan informasi akses pengujian tertutup Coin Rush 3D.">
-<link rel="stylesheet" href="/styles.css?v=20260919-2355">
+<link rel="stylesheet" href="/styles.css?v=20260920-1">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -47,7 +47,13 @@
 <div class="page-shell">
   <span class="eyebrow"><span class="dot"></span> CLOSED TESTING</span>
   <h1 class="page-title">Daftar untuk menguji Coin Rush 3D.</h1>
-  <p class="page-intro">Masukkan satu alamat email yang digunakan di Google Play. Setelah pendaftaran diterima, developer akan membalas melalui email tersebut dengan informasi akses pengujian tertutup.</p>
+  <p class="page-intro">Masukkan satu alamat email yang digunakan di Google Play. Setelah pendaftaran berhasil, Anda dapat langsung membuka halaman pengujian untuk memeriksa apakah akses tester sudah aktif.</p>
+
+  <section class="testing-steps" aria-label="Langkah mengikuti pengujian tertutup">
+    <article class="testing-step"><span>1</span><h2>Daftarkan email</h2><p>Gunakan akun Google yang sama dengan akun Play Store di perangkat Android.</p></article>
+    <article class="testing-step"><span>2</span><h2>Periksa akses</h2><p>Buka tautan resmi pengujian Google Play setelah formulir berhasil dikirim.</p></article>
+    <article class="testing-step"><span>3</span><h2>Gabung & instal</h2><p>Jika akses tersedia, pilih “Menjadi penguji”, lalu instal atau perbarui game.</p></article>
+  </section>
 
   <section class="form-card">
     <form id="testing-form" novalidate>
@@ -65,9 +71,14 @@
       <button id="submit-testing" class="btn btn-primary" type="submit">DAFTAR PENGUJIAN →</button>
       <div class="form-note">Gunakan email yang terhubung ke Google Play. Email ini hanya digunakan untuk menghubungi Anda tentang pengujian tertutup. Jangan masukkan password, PIN, atau kode verifikasi. <a href="/privacy-policy.html">Baca kebijakan privasi</a>.</div>
     </form>
+    <div id="testing-next-steps" class="testing-next" aria-live="polite">
+      <h2>Pendaftaran berhasil dikirim.</h2>
+      <p>Klik tombol berikut menggunakan akun Google yang sama. Google Play akan menampilkan apakah akses tester sudah tersedia. Jika belum, silakan periksa kembali setelah email Anda diaktifkan sebagai tester.</p>
+      <a class="btn btn-primary" href="https://play.google.com/apps/testing/com.marcelloart.coinrush3d" target="_blank" rel="noopener">CEK AKSES DI GOOGLE PLAY ↗</a>
+    </div>
   </section>
 
-  <div class="article-callout"><strong>Setelah mendaftar:</strong> cek inbox email Anda. Developer akan memeriksa pendaftaran dan membalas dengan langkah untuk bergabung ke pengujian tertutup Google Play jika slot pengujian tersedia.</div>
+  <div class="article-callout"><strong>Penting:</strong> mengirim formulir tidak menjamin akses langsung. Status keikutsertaan ditampilkan oleh Google Play melalui tautan resmi pengujian. Anda juga dapat membaca <a href="/blog/cara-bergabung-closed-testing-coin-rush-3d.html"><strong>panduan lengkap Closed Testing</strong></a>.</div>
 </div>
 </main>
 
@@ -82,6 +93,7 @@ const emailField=document.getElementById('tester-email');
 const replyTo=document.getElementById('reply-to');
 const button=document.getElementById('submit-testing');
 const statusBox=document.getElementById('testing-status');
+const nextSteps=document.getElementById('testing-next-steps');
 
 function showStatus(message,ok){
   statusBox.textContent=message;
@@ -97,6 +109,7 @@ form.addEventListener('submit',async(e)=>{
   button.disabled=true;
   button.textContent='MENGIRIM...';
   statusBox.style.display='none';
+  nextSteps.classList.remove('is-visible');
   replyTo.value=emailField.value.trim();
   const payload={};
   new FormData(form).forEach((value,key)=>payload[key]=value);
@@ -110,7 +123,10 @@ form.addEventListener('submit',async(e)=>{
     if(!response.ok||data.success===false)throw new Error(data.message||'Pendaftaran gagal');
     form.reset();
     replyTo.value='';
-    showStatus('✓ Email berhasil didaftarkan. Silakan cek inbox Anda untuk balasan developer.',true);
+    showStatus('✓ Email berhasil didaftarkan. Lanjutkan dengan memeriksa akses di Google Play.',true);
+    nextSteps.classList.add('is-visible');
+    nextSteps.scrollIntoView({behavior:'smooth',block:'nearest'});
+    document.dispatchEvent(new CustomEvent('marcello:testing-submitted'));
   }catch(error){
     showStatus('Pendaftaran belum dapat dikirim. Silakan coba lagi beberapa saat.',false);
     console.error('Testing registration error:',error);
@@ -120,5 +136,6 @@ form.addEventListener('submit',async(e)=>{
   }
 });
 </script>
+<script src="/analytics.js?v=20260920-1" defer></script>
 </body>
 </html>
