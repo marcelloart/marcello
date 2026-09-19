@@ -764,3 +764,129 @@ textarea{min-height:175px;resize:vertical}
     max-height:230px;
   }
 }
+
+/* ===== Conversion, trust and game detail polish v5 ===== */
+.skip-link{
+  position:fixed;left:16px;top:-80px;z-index:200;
+  padding:11px 15px;border-radius:12px;
+  color:#071021;background:var(--gold);font-weight:900;text-decoration:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);transition:top .2s ease
+}
+.skip-link:focus{top:16px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+  outline:2px solid var(--blue);outline-offset:3px
+}
+.hero-text-link{
+  display:inline-block;margin-top:14px;color:#b9d9ec;font-size:13px;font-weight:850;text-decoration:none
+}
+.hero-text-link:hover{color:var(--gold);text-decoration:underline;text-underline-offset:4px}
+.game-card-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.game-card-links .post-link{margin-top:13px}
+.about-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:18px}
+.about-card{
+  min-height:280px;padding:30px;border:1px solid var(--line);border-radius:28px;
+  background:linear-gradient(180deg,rgba(15,31,59,.88),rgba(7,16,32,.92));
+  box-shadow:0 18px 48px rgba(0,0,0,.2)
+}
+.about-intro{background:radial-gradient(circle at 0 0,rgba(98,221,255,.12),transparent 40%),linear-gradient(180deg,rgba(15,31,59,.88),rgba(7,16,32,.92))}
+.about-brand-mark{display:flex;align-items:center;gap:11px;color:#fff}
+.about-brand-mark .brand-mark{width:38px;height:38px;border-radius:12px;font-size:18px}
+.about-brand-mark b{display:block;font-size:15px;letter-spacing:-.02em}
+.about-brand-mark small{display:block;margin-top:2px;color:#8ea2bd;font-size:9px;letter-spacing:.16em;font-weight:900}
+.about-card h3{font-size:32px;line-height:1.05;letter-spacing:-.045em;margin:30px 0 12px}
+.about-card p{max-width:620px;color:var(--muted);line-height:1.7;margin:0}
+.trust-list{display:grid;gap:17px;list-style:none;padding:20px 0 0;margin:0}
+.trust-list li{display:flex;gap:12px;align-items:flex-start}
+.trust-list li>span{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:9px;color:#071a16;background:var(--green);font-weight:950}
+.trust-list b{display:block;font-size:14px}
+.trust-list small{display:block;margin-top:3px;color:#8da3bf;line-height:1.5}
+.about-links{display:flex;gap:15px;flex-wrap:wrap;margin-top:23px;padding-top:18px;border-top:1px solid var(--line)}
+.about-links a{color:var(--gold);font-size:12px;font-weight:900;text-decoration:none}
+.about-links a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* Dedicated Coin Rush 3D page */
+.game-page-hero{
+  padding:64px 0 45px;display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center
+}
+.game-page-copy .breadcrumbs{margin-bottom:23px}
+.game-page-copy .eyebrow{margin-bottom:1px}
+.game-page-copy .page-title{margin-top:20px}
+.game-hero-art{
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:30px;
+  background:#07101f;box-shadow:0 30px 90px rgba(0,0,0,.4),0 0 75px rgba(75,124,255,.1);isolation:isolate
+}
+.game-hero-art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(3,8,18,.78));pointer-events:none}
+.game-hero-art img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.game-art-overlay{position:absolute;left:22px;right:22px;bottom:20px;z-index:1;display:flex;align-items:end;justify-content:space-between;gap:14px}
+.game-art-overlay span{color:#ffe36d;font-size:10px;font-weight:950;letter-spacing:.16em}
+.game-art-overlay b{color:#fff;font-size:clamp(18px,2.8vw,30px);letter-spacing:-.04em}
+.game-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 25px}
+.game-facts>div{padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(14,28,53,.76),rgba(8,17,34,.76))}
+.game-facts b{display:block;color:var(--gold);font-size:28px;letter-spacing:-.05em}
+.game-facts span{display:block;margin-top:3px;color:#8fa5c2;font-size:12px;font-weight:750}
+.game-page-section{scroll-margin-top:90px}
+.preview-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;align-items:center}
+.preview-copy .section-title{margin-top:14px}
+.preview-copy .section-copy{margin-top:15px}
+.preview-frame{padding:12px;border:1px solid var(--line-strong);border-radius:25px;background:#07101f;box-shadow:var(--shadow)}
+.game-preview-video{display:block;width:min(100%,370px);height:auto;max-height:580px;aspect-ratio:9/16;object-fit:contain;margin:0 auto;border-radius:17px;background:#030812}
+.media-note{margin:10px 3px 0;color:#7187a5;font-size:11px}
+.changelog-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}
+.changelog-card,.timeline-card{border:1px solid var(--line);border-radius:25px;background:linear-gradient(180deg,rgba(15,29,55,.82),rgba(8,17,34,.88));box-shadow:0 18px 48px rgba(0,0,0,.18)}
+.changelog-card{padding:29px;display:flex;flex-direction:column;align-items:flex-start}
+.changelog-current{border-color:rgba(255,214,88,.18);background:radial-gradient(circle at 100% 0,rgba(255,214,88,.11),transparent 42%),linear-gradient(180deg,rgba(19,34,61,.9),rgba(9,18,35,.9))}
+.changelog-card .dev-state{color:#f5d875;font-size:10px;font-weight:950;letter-spacing:.15em}
+.changelog-card>b{margin-top:13px;color:#fff;font-size:52px;line-height:1;letter-spacing:-.07em}
+.changelog-card h3{margin:8px 0 11px;font-size:25px;letter-spacing:-.04em}
+.changelog-card p{margin:0;color:var(--muted);line-height:1.65;font-size:14px}
+.changelog-card .post-link{margin-top:auto;padding-top:24px}
+.timeline-card{padding:12px 23px}
+.timeline-item{display:flex;gap:14px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--line)}
+.timeline-item:last-child{border-bottom:0}
+.timeline-item>span{display:grid;place-items:center;width:29px;height:29px;flex:0 0 29px;border-radius:10px;color:#071a16;background:var(--green);font-weight:950}
+.timeline-item b{display:block;font-size:14px}
+.timeline-item small{display:block;margin-top:4px;color:#8da3bf;line-height:1.5}
+.timeline-item.is-next>span{color:#2c2000;background:var(--gold)}
+.faq-list{display:grid;gap:11px;max-width:920px}
+.faq-list details{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(15,29,55,.75),rgba(8,17,34,.82));overflow:hidden}
+.faq-list summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 22px;color:#f8fbff;font-weight:850;cursor:pointer;list-style:none}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary:after{content:"+";color:var(--gold);font-size:22px;font-weight:500;line-height:1}
+.faq-list details[open] summary:after{content:"−"}
+.faq-list details p{margin:0;padding:0 22px 20px;color:var(--muted);line-height:1.7}
+.faq-list a{color:var(--blue)}
+.game-cta{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:31px 34px;border:1px solid rgba(255,214,88,.16);border-radius:30px;background:radial-gradient(circle at 95% 0,rgba(255,214,88,.13),transparent 30%),linear-gradient(135deg,#101f3a,#0a1428);box-shadow:0 24px 70px rgba(0,0,0,.22)}
+.game-cta h2{margin:12px 0 8px;font-size:clamp(30px,4vw,44px);letter-spacing:-.045em}
+.game-cta p{margin:0;color:var(--muted);line-height:1.65}
+.game-cta .hero-actions{margin-top:0;justify-content:flex-end}
+
+@media(max-width:900px){
+  .about-grid,.game-page-hero,.preview-grid,.changelog-grid{grid-template-columns:1fr}
+  .game-page-hero{gap:36px;padding-top:48px}
+  .game-page-copy{order:1}.game-hero-art{order:2}
+  .preview-copy{max-width:720px}
+  .game-cta{align-items:flex-start;flex-direction:column}
+  .game-cta .hero-actions{justify-content:flex-start}
+}
+@media(max-width:680px){
+  .about-card{padding:24px;min-height:0}
+  .about-card h3{font-size:28px;margin-top:26px}
+  .game-page-hero{padding:40px 0 32px;gap:28px}
+  .game-page-copy .page-title{font-size:54px}
+  .game-hero-art{border-radius:22px}
+  .game-art-overlay{left:15px;right:15px;bottom:15px;align-items:flex-start;flex-direction:column;gap:4px}
+  .game-facts{grid-template-columns:1fr 1fr}
+  .game-facts>div{padding:16px}
+  .game-preview-video{aspect-ratio:9/16;max-height:none;object-fit:cover}
+  .changelog-card{padding:24px}
+  .timeline-card{padding:8px 18px}
+  .game-cta{padding:26px 23px}
+  .game-cta .hero-actions{width:100%;flex-direction:column;align-items:stretch}
+  .game-cta .btn{width:100%}
+}
+@media(max-width:430px){
+  .game-page-copy .page-title{font-size:48px}
+  .game-facts b{font-size:25px}
+  .faq-list summary{padding:17px 18px;font-size:14px}
+  .faq-list details p{padding:0 18px 18px;font-size:14px}
+}

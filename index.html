@@ -6,32 +6,68 @@
 <meta name="theme-color" content="#050814">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="shortcut icon" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="canonical" href="https://marcelloart.site/">
 <link rel="alternate" type="application/rss+xml" title="MarcelloArt Game News" href="https://marcelloart.site/rss.xml">
 <title>MarcelloArt — Game Studio & Coin Rush 3D</title>
 <meta name="description" content="MarcelloArt adalah game studio indie pengembang Coin Rush 3D. Lihat gameplay, update pengembangan, fitur game, dan berita terbaru.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="MarcelloArt">
 <meta property="og:title" content="MarcelloArt — Coin Rush 3D">
 <meta property="og:description" content="Situs resmi MarcelloArt dan Coin Rush 3D. 100 level, 10 dunia, power-up, checkpoint challenge, dan update pengembangan.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://marcelloart.site/">
 <meta property="og:image" content="https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp">
+<meta property="og:image:width" content="960">
+<meta property="og:image:height" content="540">
+<meta property="og:image:alt" content="Gameplay Coin Rush 3D dari MarcelloArt">
+<meta property="og:site_name" content="MarcelloArt">
+<meta property="og:locale" content="id_ID">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/styles.css?v=20260919-2330">
+<meta name="twitter:title" content="MarcelloArt — Coin Rush 3D">
+<meta name="twitter:description" content="Situs resmi MarcelloArt dan Coin Rush 3D. Lihat gameplay, fitur, dan update pengembangan.">
+<meta name="twitter:image" content="https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp">
+<meta name="twitter:image:alt" content="Gameplay Coin Rush 3D dari MarcelloArt">
+<link rel="stylesheet" href="/styles.css?v=20260919-2355">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
-  "@type":"VideoGame",
-  "name":"Coin Rush 3D",
-  "url":"https://marcelloart.site/",
-  "applicationCategory":"Game",
-  "operatingSystem":"Android",
-  "author":{"@type":"Organization","name":"MarcelloArt","url":"https://marcelloart.site/"},
-  "description":"Game runner 3D dengan 100 level, 10 dunia, power-up, checkpoint challenge, misi, dan hadiah harian.",
-  "image":"https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp"
+  "@graph":[
+    {
+      "@type":"Organization",
+      "@id":"https://marcelloart.site/#organization",
+      "name":"MarcelloArt",
+      "url":"https://marcelloart.site/",
+      "sameAs":["https://github.com/marcelloart"]
+    },
+    {
+      "@type":"WebSite",
+      "@id":"https://marcelloart.site/#website",
+      "url":"https://marcelloart.site/",
+      "name":"MarcelloArt",
+      "publisher":{"@id":"https://marcelloart.site/#organization"},
+      "inLanguage":"id-ID"
+    },
+    {
+      "@type":"VideoGame",
+      "@id":"https://marcelloart.site/coin-rush-3d/#game",
+      "name":"Coin Rush 3D",
+      "url":"https://marcelloart.site/coin-rush-3d/",
+      "applicationCategory":"Game",
+      "operatingSystem":"Android",
+      "playMode":"SinglePlayer",
+      "genre":["Runner","Action","Casual"],
+      "author":{"@id":"https://marcelloart.site/#organization"},
+      "description":"Game runner 3D Android dengan 100 level, 10 dunia, power-up, checkpoint challenge, misi, dan hadiah harian.",
+      "image":"https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp",
+      "softwareVersion":"1.0.0"
+    }
+  ]
 }
 </script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 <nav class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>GAME STUDIO</small></span></a>
@@ -39,13 +75,14 @@
       <a href="#games">Game</a>
       <a href="#gameplay">Gameplay</a>
       <a href="#development">Development</a>
+      <a href="#about">Tentang</a>
       <a href="/blog/">Blog</a>
       <a class="keep" href="/feedback.html">Dukungan</a>
     </div>
   </div>
 </nav>
 
-<main>
+<main id="main-content">
 <div class="wrap">
 
 <section class="home-hero" id="game">
@@ -54,12 +91,13 @@
     <h1 class="hero-title">Main lebih jauh.<br><span class="gradient-text">Kejar setiap koin.</span></h1>
     <p class="hero-desc">Coin Rush 3D adalah game runner 3D Android dengan 100 level, 10 dunia, checkpoint challenge, power-up, misi, outfit, dan progres yang terus berkembang.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#gameplay">Lihat Gameplay ↓</a>
-      <a class="btn btn-secondary" href="/blog/">Update Developer</a>
+      <a class="btn btn-primary" href="/coin-rush-3d/">Jelajahi Coin Rush 3D →</a>
+      <a class="btn btn-secondary" href="#gameplay">Lihat Gameplay</a>
     </div>
+    <a class="hero-text-link" href="/blog/">Baca update developer terbaru →</a>
     <div class="release-status">
       <span class="status-dot"></span>
-      <div><b>Google Play · Closed Testing</b><small>Coin Rush 3D v1.0.0 sedang dalam tahap pengujian.</small></div>
+      <div><b>Google Play · Closed Testing</b><small>Coin Rush 3D v1.0.0 sedang diuji. Akses publik akan diumumkan saat siap.</small></div>
     </div>
   </div>
 
@@ -129,7 +167,10 @@
         <h3>Coin Rush 3D</h3>
         <p>Kumpulkan koin, hindari rintangan, gunakan power-up, dan taklukkan seluruh 100 level.</p>
         <div class="game-tags"><span>100 Level</span><span>Power-up</span><span>Checkpoint</span><span>Single Player</span></div>
-        <a class="post-link" href="/blog/coin-rush-3d-pengujian-tertutup-v1-0-0.html">Lihat perkembangan →</a>
+        <div class="game-card-links">
+          <a class="post-link" href="/coin-rush-3d/">Lihat halaman game →</a>
+          <a class="post-link" href="/blog/coin-rush-3d-pengujian-tertutup-v1-0-0.html">Baca perkembangan →</a>
+        </div>
       </div>
     </article>
 
@@ -177,6 +218,30 @@
   </div>
 </section>
 
+<section class="section" id="about">
+  <div class="section-head">
+    <div><span class="eyebrow">ABOUT MARCELLOART</span><h2 class="section-title">Dibangun dengan proses yang terbuka.</h2></div>
+    <p class="section-copy">MarcelloArt mendokumentasikan perkembangan game, menerima masukan pemain, dan memperbaiki build berdasarkan hasil pengujian nyata.</p>
+  </div>
+  <div class="about-grid">
+    <article class="about-card about-intro">
+      <div class="about-brand-mark"><span class="brand-mark">★</span><div><b>MarcelloArt</b><small>INDIE GAME STUDIO</small></div></div>
+      <h3>Game yang berkembang bersama pemain.</h3>
+      <p>Website ini adalah pusat informasi resmi untuk game MarcelloArt: gameplay, fitur, update developer, kebijakan privasi, dan dukungan pemain.</p>
+      <a class="post-link" href="https://github.com/marcelloart" target="_blank" rel="noopener">Lihat proyek di GitHub ↗</a>
+    </article>
+    <article class="about-card">
+      <span class="feature-index">WHY THIS SITE EXISTS</span>
+      <ul class="trust-list">
+        <li><span>✓</span><div><b>Informasi resmi</b><small>Status game dan pembaruan berasal dari developer.</small></div></li>
+        <li><span>✓</span><div><b>Dukungan langsung</b><small>Laporan bug dan saran dapat dikirim melalui formulir dukungan.</small></div></li>
+        <li><span>✓</span><div><b>Privasi transparan</b><small>Informasi iklan dan data game tersedia di halaman kebijakan privasi.</small></div></li>
+      </ul>
+      <div class="about-links"><a href="/privacy-policy.html">Baca kebijakan privasi →</a><a href="/feedback.html">Kirim masukan →</a></div>
+    </article>
+  </div>
+</section>
+
 <section class="section">
   <div class="game-strip">
     <div>
@@ -195,7 +260,7 @@
   </div>
   <div class="news-grid">
     <a class="card news-featured" href="/blog/power-up-coin-rush-3d-shield-magnet-extra-life-time-boost.html">
-      <img class="post-thumb" src="/assets/blog/coin-rush-3d-power-up-guide-v2.svg?v=20260919-2315" alt="Panduan Power-up Coin Rush 3D" width="1200" height="675" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/assets/gameplay/gameplay-shop-power.webp?v=20260919-2315'">
+      <img class="post-thumb" src="/assets/blog/coin-rush-3d-power-up-guide-cover.webp?v=20260919-2355" alt="Panduan Power-up Coin Rush 3D" width="1200" height="675" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/assets/gameplay/gameplay-shop-power.webp?v=20260919-2355'">
       <div class="news-content">
         <span class="post-kicker">Coin Rush 3D · Panduan</span>
         <h3>5 Power-Up Coin Rush 3D: Shield, Magnet, Extra Life, Time Boost &amp; Dash</h3>
@@ -206,7 +271,7 @@
     </a>
     <div class="news-side">
       <a class="card post-card" href="/blog/panduan-pemula-coin-rush-3d-tips-koin-power-up.html">
-        <img class="post-thumb" src="/assets/blog/coin-rush-3d-beginner-guide-v2.svg?v=20260919-2315" alt="Panduan Pemula Coin Rush 3D" width="1200" height="675" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/assets/gameplay/gameplay-run.webp?v=20260919-2315'">
+        <img class="post-thumb" src="/assets/blog/coin-rush-3d-beginner-guide-cover.webp?v=20260919-2355" alt="Panduan Pemula Coin Rush 3D" width="1200" height="675" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/assets/gameplay/gameplay-run.webp?v=20260919-2355'">
         <span class="post-kicker">Coin Rush 3D · Panduan</span>
         <h2>Panduan Pemula Coin Rush 3D: Tips Koin, Dash &amp; Power-up</h2>
         <p>Strategi dasar untuk target koin, Dash, nyawa, power-up, dan checkpoint.</p>
@@ -228,9 +293,9 @@
 <footer class="footer">
   <div class="wrap footer-row">
     <div class="footer-brand"><span class="brand-mark">★</span><div><strong style="color:#fff">MarcelloArt</strong><br>© 2026 · Game Studio</div></div>
-    <div class="footer-links"><a href="/blog/">Blog</a><a href="/privacy-policy.html">Kebijakan Privasi</a><a href="/feedback.html">Dukungan</a></div>
+    <div class="footer-links"><a href="/coin-rush-3d/">Coin Rush 3D</a><a href="/blog/">Blog</a><a href="/privacy-policy.html">Kebijakan Privasi</a><a href="/feedback.html">Dukungan</a></div>
   </div>
 </footer>
-<script src="/gameplay-slider.js?v=20260919-2135" defer></script>
+<script src="/gameplay-slider.js?v=20260919-2355" defer></script>
 </body>
 </html>
