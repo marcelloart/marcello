@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-<title>MarcelloArt Game News</title>
+<title>MarcelloArt Gaming &amp; Game News</title>
 <link>https://marcelloart.site/blog/</link>
-<description>Berita dan update terbaru seputar game MarcelloArt.</description>
+<description>Tips gaming, rekomendasi game, panduan, berita game populer, dan update pengembangan MarcelloArt.</description>
 <language>id-ID</language>
-<lastBuildDate>Sun, 20 Sep 2026 10:15:00 +0700</lastBuildDate>
+<lastBuildDate>Sun, 20 Sep 2026 12:15:00 +0700</lastBuildDate>
+<item>
+<title>Cara Mengurangi Lag Roblox di Android: Setting Grafik, Internet & HP agar Lebih Lancar</title>
+<link>https://marcelloart.site/blog/cara-mengurangi-lag-roblox-android-setting-grafik-internet.html</link>
+<guid>https://marcelloart.site/blog/cara-mengurangi-lag-roblox-android-setting-grafik-internet.html</guid>
+<pubDate>Sun, 20 Sep 2026 12:15:00 +0700</pubDate>
+<description>Panduan lengkap mengurangi lag Roblox di Android: bedakan network lag, graphics lag, dan system lag, lalu atur grafik, koneksi, aplikasi latar belakang, storage, dan suhu HP.</description>
+</item>
 <item>
 <title>Tips Menyelesaikan Level Coin Rush 3D Sebelum Waktu Habis</title>
 <link>https://marcelloart.site/blog/tips-menyelesaikan-level-coin-rush-3d-sebelum-waktu-habis.html</link>
