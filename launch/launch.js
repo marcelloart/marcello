@@ -29,6 +29,7 @@ async function connectDetail(detail){try{const p=detail.provider;activeProvider=
 $("connectWallet").onclick=()=>{$("walletPicker").hidden=false;scanWallets()};
 $("closeWalletPicker").onclick=()=>{$("walletPicker").hidden=true};
 $("refreshWallets").onclick=scanWallets;
+$("getWalletBtn").onclick=()=>window.open("https://ethereum.org/en/wallets/","_blank","noopener");
 $("disconnectWallet").onclick=()=>{account=null;activeProvider=null;$("walletState").textContent="Not connected";$("walletState").classList.remove("is-ok");$("walletInfo").hidden=true;$("walletAddress").textContent="";$("connectWallet").textContent="Connect Wallet";$("disconnectWallet").hidden=true;$("deployToken").disabled=true;$("deployToken").textContent="Connect wallet first";$("launchProgress").hidden=true;};
 scanWallets();
 
