@@ -1,13 +1,13 @@
 (()=>{"use strict";
 const ACCESS_CODE="MARCELLO-RH-2026";
-const CHAIN={chainId:"0xb626",chainName:"Robinhood Chain Testnet",nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://rpc.testnet.chain.robinhood.com"],blockExplorerUrls:["https://explorer.testnet.chain.robinhood.com"]};
+const CHAIN={chainId:"0xb626",chainName:"Robinhood Chain Testnet",nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://rpc.testnet.chain.robinhood.com/"],blockExplorerUrls:["https://explorer.testnet.chain.robinhood.com"]};
 const $=id=>document.getElementById(id); let account=null;
 function unlock(){sessionStorage.setItem("ma_launch_access","1");$("accessGate").hidden=true;$("launchApp").hidden=false}
 if(sessionStorage.getItem("ma_launch_access")==="1") unlock();
 $("accessForm").addEventListener("submit",e=>{e.preventDefault();const ok=$("accessCode").value.trim()===ACCESS_CODE;$("accessError").hidden=ok;if(ok)unlock()});
 $("lockBtn").onclick=()=>{sessionStorage.removeItem("ma_launch_access");location.reload()};
-async function ensureNetwork(){try{await ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN.chainId}]})}catch(e){if(e.code===4902){await ethereum.request({method:"wallet_addEthereumChain",params:[CHAIN]})}else throw e}}
-$("connectWallet").onclick=async()=>{if(!window.ethereum){alert("Browser wallet EVM tidak ditemukan. Buka halaman ini melalui browser yang memiliki MetaMask atau wallet kompatibel.");return}try{await ensureNetwork();const a=await ethereum.request({method:"eth_requestAccounts"});account=a[0];$("walletState").textContent="Connected";$("walletState").classList.add("is-ok");$("walletInfo").hidden=false;$("walletAddress").textContent=account;$("connectWallet").textContent="Wallet Connected";$("deployToken").disabled=false;$("deployToken").textContent="Deploy Token on Testnet →"}catch(e){alert(e.message||"Wallet connection failed")}};
+async function ensureNetwork(){try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN.chainId}]})}catch(e){if(e.code===4902){await window.ethereum.request({method:"wallet_addEthereumChain",params:[CHAIN]})}else throw e}}
+$("connectWallet").onclick=async()=>{if(!window.ethereum){alert("Wallet EVM tidak terdeteksi. Jika MetaMask sudah terpasang, buka halaman ini langsung di browser yang memasang extension MetaMask, lalu refresh.");return}try{const a=await window.ethereum.request({method:"eth_requestAccounts"});account=a[0];await ensureNetwork();$("walletState").textContent="Connected";$("walletState").classList.add("is-ok");$("walletInfo").hidden=false;$("walletAddress").textContent=account;$("connectWallet").textContent="Wallet Connected";$("deployToken").disabled=false;$("deployToken").textContent="Deploy Token on Testnet →"}catch(e){alert(e.message||"Wallet connection failed")}};
 const source=(name,symbol)=>`// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 contract MarcelloFixedERC20 {
