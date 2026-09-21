@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#050814">
   <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://rpc.mainnet.chain.robinhood.com https://rpc.testnet.chain.robinhood.com https://api.pinata.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
   <title>Private Token Launch — MarcelloArt</title>
-  <meta name="description" content="Private token launch workspace untuk Robinhood Chain Testnet.">
+  <meta name="description" content="Private fixed-supply token launcher for Robinhood Chain.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="stylesheet" href="/styles.css?v=20260921-launch3">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
+  <link rel="stylesheet" href="/styles.css?v=20260921-mainnet1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js" integrity="sha384-OwtfwhPoP4aGLIw192UbPWjNbSkb7AllEbIhEJ01Yp8MxhNLLNUMA+DSjh6Zct05" crossorigin="anonymous" defer></script>
 </head>
 <body class="launch-page">
   <div id="accessGate" class="launch-gate">
@@ -17,7 +18,7 @@
       <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>PRIVATE LAB</small></span></a>
       <span class="launch-lock">PRIVATE ACCESS</span>
       <h1>Token Launch Lab</h1>
-      <p>Masukkan access code untuk membuka workspace Robinhood Chain.</p>
+      <p id="accessGateText">Masukkan access code untuk membuka workspace token.</p>
       <form id="accessForm">
         <label for="accessCode">Access Code</label>
         <div class="launch-code-row">
@@ -26,7 +27,7 @@
         </div>
         <p id="accessError" class="launch-error" hidden>Kode akses tidak valid.</p>
       </form>
-      <small>Session akses tersimpan hanya di browser ini.</small>
+      <small>Gate ini hanya membatasi tampilan di browser. Jangan pernah memasukkan private key ke website.</small>
     </div>
   </div>
 
@@ -35,7 +36,8 @@
       <div class="wrap nav-inner">
         <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>TOKEN LAB</small></span></a>
         <div class="nav-links">
-          <span class="launch-testnet-pill">ROBINHOOD TESTNET</span>
+          <span id="networkBadge" class="launch-testnet-pill">ROBINHOOD MAINNET</span>
+          <a id="networkModeLink" class="launch-nav-btn" href="/launch/?network=testnet">Testnet QA</a>
           <button id="lockBtn" class="launch-nav-btn" type="button">Lock</button>
         </div>
       </div>
@@ -46,17 +48,18 @@
         <div>
           <span class="eyebrow"><span class="dot"></span> PRIVATE TOKEN LAUNCHER</span>
           <h1>Build. Sign.<br><span class="gradient-text">Launch onchain.</span></h1>
-          <p class="lead">Buat ERC-20 fixed-supply di Robinhood Chain Testnet. Website tidak meminta atau menyimpan private key; transaksi ditandatangani langsung melalui wallet Anda.</p>
+          <p id="heroDescription" class="lead">Buat ERC-20 fixed-supply di Robinhood Chain mainnet. Website tidak meminta atau menyimpan private key; transaksi ditandatangani langsung melalui wallet Anda.</p>
         </div>
         <div class="launch-network-card">
           <span>NETWORK</span>
-          <strong>Robinhood Chain Testnet</strong>
-          <code>Chain ID 46630</code>
-          <small>Gas token: ETH</small>
+          <strong id="networkName">Robinhood Chain</strong>
+          <code id="networkChainId">Chain ID 4663</code>
+          <small id="networkGas">Gas token: ETH</small>
           <div class="launch-network-actions">
-            <a class="btn btn-secondary" href="https://faucet.testnet.chain.robinhood.com/add-chain" target="_blank" rel="noopener">Get testnet ETH ↗</a>
-            <a class="launch-network-link" href="https://explorer.testnet.chain.robinhood.com/" target="_blank" rel="noopener">Open Explorer ↗</a>
+            <a id="networkFaucetLink" class="btn btn-secondary" href="https://faucet.testnet.chain.robinhood.com/add-chain" target="_blank" rel="noopener" hidden>Get testnet ETH ↗</a>
+            <a id="networkExplorerLink" class="launch-network-link" href="https://robinhoodchain.blockscout.com/" target="_blank" rel="noopener">Open Explorer ↗</a>
           </div>
+          <small id="networkRpcNote" class="launch-small">Wallet/provider RPC digunakan untuk membaca status dan mengirim transaksi.</small>
         </div>
       </section>
 
@@ -66,7 +69,7 @@
             <div><span class="feature-index">01 · WALLET</span><h2>Connect Wallet</h2></div>
             <span id="walletState" class="launch-status">Not connected</span>
           </div>
-          <p>Gunakan browser wallet EVM seperti MetaMask. Network akan diarahkan ke Robinhood Chain Testnet.</p>
+          <p id="walletDescription">Gunakan browser wallet EVM seperti MetaMask. Network akan diarahkan ke Robinhood Chain mainnet.</p>
           <div class="wallet-actions">
             <button id="connectWallet" class="btn btn-primary" type="button">Connect Wallet</button>
             <button id="disconnectWallet" class="btn btn-secondary wallet-disconnect" type="button" hidden>Disconnect</button>
@@ -100,7 +103,7 @@
 
           <div id="walletInfo" class="launch-wallet-info" hidden>
             <span>Address</span><code id="walletAddress"></code>
-            <span>Network</span><b id="walletNetwork">Robinhood Chain Testnet</b>
+            <span>Network</span><b id="walletNetwork">Robinhood Chain</b>
           </div>
         </div>
 
@@ -111,10 +114,11 @@
           <form id="tokenForm" class="launch-form">
             <label>Token Name<input id="tokenName" maxlength="40" placeholder="Example Token" required></label>
             <label>Ticker / Symbol<input id="tokenSymbol" maxlength="10" placeholder="EXMPL" required></label>
-            <label>Total Supply<input id="tokenSupply" type="number" min="1" step="1" placeholder="1000000000" required></label>
+            <label>Total Supply<input id="tokenSupply" type="text" inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="1000000000" required></label>
+            <label>Token Description <span class="launch-optional">optional</span><textarea id="tokenDescription" maxlength="280" rows="3" placeholder="Community token on Robinhood Chain. Not affiliated with Robinhood."></textarea></label>
 
             <div class="launch-image-field">
-              <span class="launch-field-label">Token Image / Logo</span>
+              <span class="launch-field-label">Token Image / Logo <strong class="launch-required">required</strong></span>
               <div id="tokenImageDropzone" class="launch-image-dropzone">
                 <input id="tokenImage" class="launch-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
                 <label for="tokenImage" class="launch-image-picker">
@@ -125,7 +129,16 @@
                 <button id="removeTokenImage" class="launch-image-remove" type="button" hidden>Remove</button>
               </div>
               <p id="tokenImageError" class="launch-error" hidden></p>
-              <p class="launch-small">Gambar digunakan sebagai preview lokal dan tidak dikirim ke wallet atau disimpan on-chain.</p>
+              <label class="launch-subfield" for="tokenImageUri">Existing image URI <span class="launch-optional">IPFS/HTTPS</span><input id="tokenImageUri" type="text" autocomplete="off" placeholder="ipfs://... atau https://..." spellcheck="false"></label>
+              <details id="ipfsUploadDetails" class="launch-ipfs-box">
+                <summary>Make image permanent on IPFS <span>recommended for mainnet</span></summary>
+                <p>Pin image dan metadata secara permanen sebelum deploy. JWT hanya dipakai di browser selama sesi ini dan tidak disimpan.</p>
+                <label class="launch-subfield" for="pinataJwt">Temporary Pinata JWT<input id="pinataJwt" type="password" autocomplete="off" placeholder="Paste restricted, one-use JWT" spellcheck="false"></label>
+                <div class="launch-ipfs-actions"><button id="uploadTokenImage" class="btn btn-secondary" type="button">Upload image to IPFS</button><span id="tokenImageStorageStatus" class="launch-storage-status">Belum diunggah</span></div>
+                <small>Gunakan JWT terbatas untuk pinFileToIPFS dan pinJSONToIPFS, bukan admin key utama.</small>
+              </details>
+              <label class="launch-subfield" for="tokenMetadataUri">Metadata URI <span class="launch-optional">diisi otomatis setelah pinning</span><input id="tokenMetadataUri" type="text" autocomplete="off" placeholder="ipfs://... atau https://..." spellcheck="false"></label>
+              <p class="launch-small">Catatan: kontrak ERC-20 ini tidak memiliki fungsi <code>tokenURI</code>. URI disimpan sebagai hasil metadata untuk listing atau explorer yang mendukungnya.</p>
             </div>
 
             <div class="launch-summary">
@@ -134,8 +147,20 @@
               <div><span>Owner</span><b>Connected wallet</b></div>
             </div>
             <button id="deployToken" class="btn btn-primary launch-deploy" type="submit" disabled>Connect wallet first</button>
-            <p class="launch-small">Deployment membutuhkan testnet ETH untuk gas. Token tidak memiliki fungsi mint tambahan, pajak transaksi, blacklist, atau transfer restriction.</p>
+            <p id="deployHelp" class="launch-small">Deployment membutuhkan ETH untuk gas. Token tidak memiliki fungsi mint tambahan, pajak transaksi, blacklist, atau transfer restriction.</p>
           </form>
+        </div>
+      </section>
+
+      <section id="pendingDeployment" class="launch-panel launch-pending" hidden>
+        <span class="feature-index">RECOVERABLE TRANSACTION</span>
+        <h2>Deployment masih tersimpan.</h2>
+        <p id="pendingDeploymentText">Hash transaksi ditemukan. Periksa statusnya sebelum membuat deployment baru.</p>
+        <code id="pendingTxHash"></code>
+        <div class="hero-actions">
+          <a id="pendingExplorerLink" class="btn btn-secondary" target="_blank" rel="noopener">Open Transaction ↗</a>
+          <button id="recoverDeployment" class="btn btn-primary" type="button">Check & Recover</button>
+          <button id="forgetDeployment" class="btn btn-secondary" type="button">Forget Record</button>
         </div>
       </section>
 
@@ -152,21 +177,25 @@
         <div id="successTokenImageWrap" class="launch-success-image" hidden><img id="successTokenImage" alt="Token image preview"></div>
         <p>Contract address:</p>
         <code id="contractAddress"></code>
+        <div id="successMetadata" class="launch-metadata-box" hidden>
+          <span>Image URI</span><code id="successImageUri"></code>
+          <span>Metadata URI</span><code id="successMetadataUri"></code>
+        </div>
         <div class="hero-actions">
           <a id="explorerLink" class="btn btn-primary" target="_blank" rel="noopener">View on Explorer ↗</a>
           <button id="copyAddress" class="btn btn-secondary" type="button">Copy Address</button>
+          <button id="copyVerification" class="btn btn-secondary" type="button">Copy Verification Info</button>
         </div>
+        <p id="verificationNote" class="launch-small">Verifikasi source dilakukan di Blockscout menggunakan compiler Solidity 0.8.30 dan constructor arguments dari deployment ini.</p>
+        <a id="verificationLink" class="launch-network-link" target="_blank" rel="noopener">Open contract verification ↗</a>
       </section>
 
-      <section class="launch-warning"><strong>Testnet only.</strong> Token testnet tidak memiliki nilai moneter. Periksa nama, ticker, supply, dan gambar sebelum menandatangani transaksi karena deployment blockchain tidak dapat dibatalkan.</section>
+      <section id="launchWarning" class="launch-warning"><strong id="warningTitle">Mainnet warning.</strong> <span id="warningText">Transaksi mainnet memakai ETH nyata dan tidak dapat dibatalkan. Pastikan nama, ticker, supply, gambar, dan wallet owner sudah benar. Token ini dibuat pihak ketiga dan tidak resmi atau berafiliasi dengan Robinhood.</span></section>
     </main>
 
     <footer class="footer"><div class="wrap footer-row"><div>© 2026 MarcelloArt · Private Token Lab</div><div class="footer-links"><a href="/">Beranda</a><a href="/privacy-policy.html">Privasi</a></div></div></footer>
   </div>
 
-  <script>
-  (()=>{const CODE="MARCELLO-RH-2026",gate=document.getElementById("accessGate"),app=document.getElementById("launchApp"),form=document.getElementById("accessForm"),input=document.getElementById("accessCode"),err=document.getElementById("accessError");function openLab(){gate.style.display="none";app.hidden=false;app.style.display="block";try{sessionStorage.setItem("ma_launch_access","1")}catch(e){}}try{if(sessionStorage.getItem("ma_launch_access")==="1")openLab()}catch(e){}form.addEventListener("submit",e=>{e.preventDefault();if(input.value.trim()===CODE){err.hidden=true;openLab()}else{err.hidden=false}});document.getElementById("lockBtn").addEventListener("click",()=>{try{sessionStorage.removeItem("ma_launch_access")}catch(e){}location.reload()});})();
-  </script>
-  <script src="/launch/launch.js?v=20260921-16"></script>
+  <script src="/launch/launch.js?v=20260921-mainnet1" defer></script>
 </body>
 </html>

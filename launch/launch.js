@@ -2,14 +2,50 @@
   "use strict";
 
   const $ = (id) => document.getElementById(id);
-  const CHAIN = {
-    chainId: "0xb626",
-    chainName: "Robinhood Chain Testnet",
-    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-    rpcUrls: ["https://rpc.testnet.chain.robinhood.com"],
-    blockExplorerUrls: ["https://explorer.testnet.chain.robinhood.com"]
+  const NETWORKS = {
+    mainnet: {
+      mode: "mainnet",
+      label: "Robinhood Chain",
+      badge: "ROBINHOOD MAINNET",
+      chainId: "0x1237",
+      chainIdNumber: 4663,
+      chain: {
+        chainId: "0x1237",
+        chainName: "Robinhood Chain",
+        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+        rpcUrls: ["https://rpc.mainnet.chain.robinhood.com"],
+        blockExplorerUrls: ["https://robinhoodchain.blockscout.com"]
+      },
+      explorer: "https://robinhoodchain.blockscout.com",
+      faucet: ""
+    },
+    testnet: {
+      mode: "testnet",
+      label: "Robinhood Chain Testnet",
+      badge: "ROBINHOOD TESTNET",
+      chainId: "0xb626",
+      chainIdNumber: 46630,
+      chain: {
+        chainId: "0xb626",
+        chainName: "Robinhood Chain Testnet",
+        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+        rpcUrls: ["https://rpc.testnet.chain.robinhood.com"],
+        blockExplorerUrls: ["https://explorer.testnet.chain.robinhood.com"]
+      },
+      explorer: "https://explorer.testnet.chain.robinhood.com",
+      faucet: "https://faucet.testnet.chain.robinhood.com/add-chain"
+    }
   };
-  const TESTNET_CHAIN_ID = 46630;
+  const networkMode = new URLSearchParams(window.location.search).get("network") === "testnet" ? "testnet" : "mainnet";
+  const NETWORK = NETWORKS[networkMode];
+  const CHAIN = NETWORK.chain;
+  const IS_MAINNET = networkMode === "mainnet";
+  const TARGET_CHAIN_ID = NETWORK.chainIdNumber;
+  const ACCESS_CODE_HASH = "83b74934659cf63aec60e5c1b6a29fe97f22629c85a3b2548d39dddb552fd479";
+  const PINATA_FILE_ENDPOINT = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+  const PINATA_JSON_ENDPOINT = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
+  const PENDING_STORAGE_KEY = `ma_launch_pending_${networkMode}`;
+  const CONTRACT_SOURCE_URL = "https://github.com/marcelloart/marcello/blob/main/launch/contracts/MarcelloFixedERC20.sol";
   const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
   const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
   const TOKEN_ABI = ["constructor(string n, string s, uint256 supply, address owner)"];
@@ -19,12 +55,123 @@
   let activeProvider = null;
   let activeWalletName = "";
   let activeChainId = null;
+  let selectedImageFile = null;
   let selectedImageDataUrl = "";
   let selectedImageName = "";
+  let selectedImageUri = "";
+  let selectedMetadataUri = "";
+  let ephemeralPinataJwt = "";
+  let pendingDeployment = null;
+  let currentVerificationData = null;
   const announced = new Map();
 
   const normalizeChainId = (chainId) => String(chainId || "").toLowerCase();
-  const isTestnet = () => normalizeChainId(activeChainId) === CHAIN.chainId;
+  const isTargetNetwork = () => normalizeChainId(activeChainId) === CHAIN.chainId;
+
+  function setText(id, value) {
+    const element = $(id);
+    if (element) element.textContent = value;
+  }
+
+  function explorerAddressUrl(address) {
+    return `${NETWORK.explorer}/address/${address}`;
+  }
+
+  function explorerTransactionUrl(hash) {
+    return `${NETWORK.explorer}/tx/${hash}`;
+  }
+
+  function applyNetworkCopy() {
+    setText("networkBadge", NETWORK.badge);
+    setText("networkName", NETWORK.label);
+    setText("networkChainId", `Chain ID ${NETWORK.chainIdNumber}`);
+    setText("walletNetwork", NETWORK.label);
+    setText("walletDescription", `Gunakan browser wallet EVM seperti MetaMask. Network akan diarahkan ke ${NETWORK.label}.`);
+    setText("heroDescription", `Buat ERC-20 fixed-supply di ${NETWORK.label}. Website tidak meminta atau menyimpan private key; transaksi ditandatangani langsung melalui wallet Anda.`);
+    setText("networkRpcNote", IS_MAINNET ? "Wallet/provider RPC digunakan untuk membaca status dan mengirim transaksi. Untuk traffic produksi tinggi, gunakan RPC provider khusus." : "Testnet ETH hanya untuk QA dan tidak memiliki nilai moneter.");
+    setText("deployHelp", `Deployment membutuhkan ETH ${IS_MAINNET ? "mainnet" : "testnet"} untuk gas. Token tidak memiliki fungsi mint tambahan, pajak transaksi, blacklist, atau transfer restriction.`);
+    const faucet = $("networkFaucetLink");
+    if (faucet) {
+      faucet.hidden = !NETWORK.faucet;
+      if (NETWORK.faucet) faucet.href = NETWORK.faucet;
+    }
+    const explorer = $("networkExplorerLink");
+    if (explorer) explorer.href = NETWORK.explorer;
+    const modeLink = $("networkModeLink");
+    if (modeLink) {
+      modeLink.href = IS_MAINNET ? "/launch/?network=testnet" : "/launch/";
+      modeLink.textContent = IS_MAINNET ? "Testnet QA" : "Mainnet";
+    }
+    const badge = $("networkBadge");
+    if (badge) badge.classList.toggle("launch-mainnet-pill", IS_MAINNET);
+    setText("warningTitle", IS_MAINNET ? "Mainnet warning." : "Testnet only.");
+    setText("warningText", IS_MAINNET
+      ? "Transaksi mainnet memakai ETH nyata dan tidak dapat dibatalkan. Pastikan nama, ticker, supply, gambar, metadata, dan wallet owner sudah benar. Token ini dibuat pihak ketiga dan tidak resmi atau berafiliasi dengan Robinhood."
+      : "Token testnet tidak memiliki nilai moneter. Periksa nama, ticker, supply, gambar, dan metadata sebelum menandatangani transaksi karena deployment blockchain tidak dapat dibatalkan.");
+  }
+
+  function readStorage(storage, key) {
+    try {
+      return storage.getItem(key);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeStorage(storage, key, value) {
+    try {
+      storage.setItem(key, value);
+    } catch (error) {
+      console.debug("Storage unavailable", error);
+    }
+  }
+
+  function removeStorage(storage, key) {
+    try {
+      storage.removeItem(key);
+    } catch (error) {
+      console.debug("Storage cleanup skipped", error);
+    }
+  }
+
+  async function sha256Hex(value) {
+    const bytes = new TextEncoder().encode(value);
+    const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  function openLaunchApp() {
+    $("accessGate").style.display = "none";
+    $("launchApp").hidden = false;
+    $("launchApp").style.display = "block";
+    writeStorage(window.sessionStorage, "ma_launch_access_v2", "1");
+  }
+
+  function bindAccessGate() {
+    const gate = $("accessGate");
+    const app = $("launchApp");
+    const form = $("accessForm");
+    const input = $("accessCode");
+    const error = $("accessError");
+    if (!gate || !app || !form || !input || !error) return;
+    if (readStorage(window.sessionStorage, "ma_launch_access_v2") === "1") openLaunchApp();
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        const valid = await sha256Hex(input.value.trim()) === ACCESS_CODE_HASH;
+        error.hidden = valid;
+        if (valid) openLaunchApp();
+      } catch (hashError) {
+        console.error("Access verification failed", hashError);
+        error.textContent = "Browser tidak mendukung verifikasi access code.";
+        error.hidden = false;
+      }
+    });
+    $("lockBtn").addEventListener("click", () => {
+      removeStorage(window.sessionStorage, "ma_launch_access_v2");
+      window.location.reload();
+    });
+  }
 
   function showImageError(message) {
     const error = $("tokenImageError");
@@ -38,18 +185,61 @@
     error.hidden = true;
   }
 
+  function normalizeUri(value) {
+    const uri = String(value || "").trim();
+    if (!uri) return "";
+    if (/^ipfs:\/\/[A-Za-z0-9]+/i.test(uri) || /^https:\/\//i.test(uri)) return uri;
+    throw new Error("URI harus diawali ipfs:// atau https://.");
+  }
+
+  function toGatewayUrl(uri) {
+    if (!uri) return "";
+    if (/^ipfs:\/\//i.test(uri)) return `https://ipfs.io/ipfs/${uri.slice(7)}`;
+    return uri;
+  }
+
+  function setStorageStatus(message, ok = false) {
+    const status = $("tokenImageStorageStatus");
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("is-ok", ok);
+  }
+
+  function renderImagePreview() {
+    const preview = $("tokenImagePreview");
+    const placeholder = $("tokenImagePlaceholder");
+    const hasPreview = Boolean(selectedImageDataUrl || selectedImageUri);
+    if (!preview || !placeholder) return;
+    if (selectedImageDataUrl) preview.src = selectedImageDataUrl;
+    else if (selectedImageUri) preview.src = toGatewayUrl(selectedImageUri);
+    else preview.removeAttribute("src");
+    preview.hidden = !hasPreview;
+    placeholder.hidden = hasPreview;
+  }
+
+  function setImageUri(uri, statusMessage = "Image URI siap digunakan") {
+    selectedImageUri = normalizeUri(uri);
+    $("tokenImageUri").value = selectedImageUri;
+    renderImagePreview();
+    setStorageStatus(statusMessage, true);
+  }
+
   function resetImagePreview() {
+    selectedImageFile = null;
     selectedImageDataUrl = "";
     selectedImageName = "";
+    selectedImageUri = "";
+    selectedMetadataUri = "";
     $("tokenImage").value = "";
-    $("tokenImagePreview").removeAttribute("src");
-    $("tokenImagePreview").hidden = true;
-    $("tokenImagePlaceholder").hidden = false;
+    $("tokenImageUri").value = "";
+    $("tokenMetadataUri").value = "";
     $("tokenImageTitle").textContent = "Upload token image";
     $("tokenImageMeta").textContent = "PNG, JPG, WebP, atau GIF · maksimal 10 MB";
     $("removeTokenImage").hidden = true;
     $("tokenImageDropzone").classList.remove("has-image", "is-dragover");
     $("successTokenImageWrap").hidden = true;
+    setStorageStatus("Belum diunggah");
+    renderImagePreview();
     clearImageError();
   }
 
@@ -65,13 +255,17 @@
       return;
     }
 
+    selectedImageFile = file;
+    selectedImageUri = "";
+    selectedMetadataUri = "";
+    $("tokenImageUri").value = "";
+    $("tokenMetadataUri").value = "";
+    setStorageStatus("Belum diunggah");
     const reader = new FileReader();
     reader.onload = () => {
       selectedImageDataUrl = String(reader.result || "");
       selectedImageName = file.name;
-      $("tokenImagePreview").src = selectedImageDataUrl;
-      $("tokenImagePreview").hidden = false;
-      $("tokenImagePlaceholder").hidden = true;
+      renderImagePreview();
       $("tokenImageTitle").textContent = file.name;
       $("tokenImageMeta").textContent = `${Math.max(1, Math.round(file.size / 1024))} KB · klik untuk mengganti`;
       $("removeTokenImage").hidden = false;
@@ -81,12 +275,169 @@
     reader.readAsDataURL(file);
   }
 
+  function handleImageUriChange(value) {
+    const uri = String(value || "").trim();
+    if (!uri) {
+      if (!selectedImageFile) {
+        selectedImageUri = "";
+        selectedImageDataUrl = "";
+        renderImagePreview();
+        setStorageStatus("Belum diunggah");
+      }
+      return;
+    }
+    try {
+      selectedImageFile = null;
+      selectedImageDataUrl = "";
+      setImageUri(uri, "Existing image URI siap digunakan");
+      $("tokenImageTitle").textContent = "Existing image URI";
+      $("tokenImageMeta").textContent = "Preview dari URI yang diberikan";
+      $("removeTokenImage").hidden = false;
+      $("tokenImageDropzone").classList.add("has-image");
+      clearImageError();
+    } catch (error) {
+      showImageError(error.message);
+    }
+  }
+
+  function handleMetadataUriChange(value) {
+    try {
+      selectedMetadataUri = normalizeUri(value);
+      if (selectedMetadataUri) setText("tokenImageStorageStatus", "Metadata URI siap digunakan");
+      clearImageError();
+    } catch (error) {
+      showImageError(error.message);
+    }
+  }
+
+  async function responseJson(response) {
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const reason = data.error?.details || data.error?.message || data.message || `HTTP ${response.status}`;
+      throw new Error(`IPFS upload gagal: ${reason}`);
+    }
+    return data;
+  }
+
+  async function pinFileToIpfs(file, jwt, name) {
+    const form = new FormData();
+    form.append("file", file, file.name || "token-image");
+    form.append("pinataMetadata", JSON.stringify({ name: `${name || "token"}-logo` }));
+    form.append("pinataOptions", JSON.stringify({ cidVersion: 1 }));
+    const response = await fetch(PINATA_FILE_ENDPOINT, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${jwt}` },
+      body: form
+    });
+    const data = await responseJson(response);
+    if (!data.IpfsHash) throw new Error("IPFS tidak mengembalikan CID gambar.");
+    return `ipfs://${data.IpfsHash}`;
+  }
+
+  async function pinJsonToIpfs(metadata, jwt, name) {
+    const response = await fetch(PINATA_JSON_ENDPOINT, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        pinataOptions: { cidVersion: 1 },
+        pinataMetadata: { name: `${name || "token"}-metadata.json` },
+        pinataContent: metadata
+      })
+    });
+    const data = await responseJson(response);
+    if (!data.IpfsHash) throw new Error("IPFS tidak mengembalikan CID metadata.");
+    return `ipfs://${data.IpfsHash}`;
+  }
+
+  async function uploadSelectedImageToIpfs() {
+    if (!selectedImageFile) {
+      showImageError("Pilih file gambar terlebih dahulu sebelum upload ke IPFS.");
+      return;
+    }
+    const jwt = $("pinataJwt").value.trim() || ephemeralPinataJwt;
+    if (!jwt) {
+      showImageError("Masukkan Pinata JWT terbatas untuk mengunggah gambar ke IPFS.");
+      $("ipfsUploadDetails").open = true;
+      return;
+    }
+    const button = $("uploadTokenImage");
+    button.disabled = true;
+    button.textContent = "Uploading…";
+    clearImageError();
+    setStorageStatus("Mengunggah gambar ke IPFS…");
+    try {
+      ephemeralPinataJwt = jwt;
+      const uri = await pinFileToIpfs(selectedImageFile, jwt, $("tokenName").value.trim() || "token");
+      setImageUri(uri, "Image pinned ke IPFS ✓");
+      $("pinataJwt").value = "";
+    } catch (error) {
+      showImageError(error.message || "Gambar gagal diunggah ke IPFS.");
+      setStorageStatus("Upload gagal");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Upload image to IPFS";
+    }
+  }
+
+  async function prepareTokenMetadata(name, symbol, rawSupply) {
+    let imageUri = selectedImageUri || normalizeUri($("tokenImageUri").value);
+    let metadataUri = selectedMetadataUri || normalizeUri($("tokenMetadataUri").value);
+    const jwt = $("pinataJwt").value.trim() || ephemeralPinataJwt;
+
+    if (!imageUri && selectedImageFile) {
+      if (!jwt) {
+        if (IS_MAINNET) throw new Error("Gambar belum permanen. Buka bagian IPFS dan masukkan Pinata JWT terbatas.");
+        setStorageStatus("Preview lokal untuk testnet");
+      } else {
+        setText("progressText", "Mengunggah gambar ke IPFS sebelum transaksi wallet…");
+        ephemeralPinataJwt = jwt;
+        imageUri = await pinFileToIpfs(selectedImageFile, jwt, name);
+        setImageUri(imageUri, "Image pinned ke IPFS ✓");
+      }
+    }
+    if (!imageUri && !selectedImageFile) throw new Error("Token image wajib dipilih atau diisi dengan image URI IPFS/HTTPS.");
+
+    if (!metadataUri && jwt) {
+      setText("progressText", "Membuat metadata token di IPFS…");
+      const description = $("tokenDescription").value.trim() || `${name} (${symbol}) community token on ${NETWORK.label}. Not affiliated with Robinhood.`;
+      metadataUri = await pinJsonToIpfs({
+        name,
+        symbol,
+        description,
+        image: imageUri,
+        external_url: `${window.location.origin}/launch/`,
+        attributes: [
+          { trait_type: "Network", value: NETWORK.label },
+          { trait_type: "Supply Type", value: "Fixed" },
+          { trait_type: "Decimals", value: 18 },
+          { trait_type: "Total Supply", value: rawSupply }
+        ]
+      }, jwt, symbol);
+      selectedMetadataUri = metadataUri;
+      $("tokenMetadataUri").value = metadataUri;
+      setStorageStatus("Image + metadata pinned ke IPFS ✓", true);
+    }
+
+    if (IS_MAINNET && !metadataUri) {
+      throw new Error("Mainnet membutuhkan Metadata URI. Upload image + metadata ke IPFS atau isi Metadata URI yang sudah ada.");
+    }
+
+    ephemeralPinataJwt = "";
+    $("pinataJwt").value = "";
+    return { imageUri, metadataUri };
+  }
+
   function bindImagePicker() {
     const dropzone = $("tokenImageDropzone");
     const input = $("tokenImage");
     if (!dropzone || !input) return;
     input.addEventListener("change", (event) => handleImageFile(event.target.files && event.target.files[0]));
     $("removeTokenImage").addEventListener("click", resetImagePreview);
+    $("tokenImageUri").addEventListener("change", (event) => handleImageUriChange(event.target.value));
+    $("tokenImageUri").addEventListener("blur", (event) => handleImageUriChange(event.target.value));
+    $("tokenMetadataUri").addEventListener("change", (event) => handleMetadataUriChange(event.target.value));
+    $("tokenMetadataUri").addEventListener("blur", (event) => handleMetadataUriChange(event.target.value));
+    $("uploadTokenImage").addEventListener("click", uploadSelectedImageToIpfs);
     ["dragenter", "dragover"].forEach((eventName) => dropzone.addEventListener(eventName, (event) => {
       event.preventDefault();
       dropzone.classList.add("is-dragover");
@@ -112,21 +463,21 @@
     if (!connected) {
       state.textContent = "Not connected";
       state.classList.remove("is-ok");
-      network.textContent = "Robinhood Chain Testnet";
+      network.textContent = NETWORK.label;
       setDeployState(false, "Connect wallet first");
       return;
     }
 
-    if (isTestnet()) {
+    if (isTargetNetwork()) {
       state.textContent = `${activeWalletName || "Wallet"} Connected`;
       state.classList.add("is-ok");
-      network.textContent = "Robinhood Chain Testnet";
-      setDeployState(true, "Deploy Token on Testnet →");
+      network.textContent = NETWORK.label;
+      setDeployState(true, `Deploy Token on ${IS_MAINNET ? "Mainnet" : "Testnet"} →`);
     } else {
-      state.textContent = "Switch to Testnet";
+      state.textContent = `Switch to ${NETWORK.label}`;
       state.classList.remove("is-ok");
       network.textContent = "Wrong network · switch required";
-      setDeployState(false, "Switch to Robinhood Testnet");
+      setDeployState(false, `Switch to ${NETWORK.label}`);
     }
   }
 
@@ -143,6 +494,7 @@
     $("disconnectWallet").hidden = true;
     $("launchProgress").hidden = true;
     renderWalletState();
+    renderPendingDeployment();
   }
 
   function bindProvider(provider) {
@@ -171,6 +523,7 @@
     $("walletAddress").textContent = account;
     $("walletInfo").hidden = false;
     renderWalletState();
+    renderPendingDeployment();
   }
 
   function handleChainChanged(chainId) {
@@ -269,6 +622,49 @@
     return String(message).replace(/^Error:\s*/i, "").trim();
   }
 
+  function loadPendingDeployment() {
+    const raw = readStorage(window.localStorage, PENDING_STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (!parsed || !/^0x[0-9a-f]{64}$/i.test(parsed.txHash || "")) return null;
+      return parsed;
+    } catch (error) {
+      removeStorage(window.localStorage, PENDING_STORAGE_KEY);
+      return null;
+    }
+  }
+
+  function savePendingDeployment(record) {
+    pendingDeployment = { ...record, networkMode, chainId: NETWORK.chainIdNumber, savedAt: new Date().toISOString() };
+    writeStorage(window.localStorage, PENDING_STORAGE_KEY, JSON.stringify(pendingDeployment));
+    renderPendingDeployment();
+  }
+
+  function clearPendingDeployment() {
+    pendingDeployment = null;
+    removeStorage(window.localStorage, PENDING_STORAGE_KEY);
+    renderPendingDeployment();
+  }
+
+  function renderPendingDeployment() {
+    const panel = $("pendingDeployment");
+    if (!panel) return;
+    if (!pendingDeployment) {
+      panel.hidden = true;
+      return;
+    }
+    panel.hidden = false;
+    setText("pendingTxHash", pendingDeployment.txHash);
+    const link = $("pendingExplorerLink");
+    link.href = explorerTransactionUrl(pendingDeployment.txHash);
+    const sameAccount = Boolean(account && pendingDeployment.account && account.toLowerCase() === pendingDeployment.account.toLowerCase());
+    setText("pendingDeploymentText", sameAccount
+      ? "Hash transaksi ditemukan untuk wallet ini. Periksa statusnya sebelum membuat deployment baru."
+      : `Deployment tersimpan dari wallet ${pendingDeployment.account || "sebelumnya"}. Hubungkan wallet tersebut untuk recovery.`);
+    $("recoverDeployment").disabled = Boolean(activeProvider && pendingDeployment.account && !sameAccount);
+  }
+
   async function waitForReceipt(provider, txHash) {
     const started = Date.now();
     while (Date.now() - started < 180000) {
@@ -276,7 +672,7 @@
       if (receipt) return receipt;
       await new Promise((resolve) => window.setTimeout(resolve, 1200));
     }
-    throw new Error("Transaksi belum terkonfirmasi setelah 3 menit. Periksa hash transaksi di explorer.");
+    throw new Error("Transaksi belum terkonfirmasi setelah 3 menit. Hash sudah disimpan; gunakan panel recovery atau buka explorer.");
   }
 
   async function copyContractAddress() {
@@ -290,6 +686,96 @@
     }
   }
 
+  async function copyVerificationInfo() {
+    if (!currentVerificationData) return;
+    const info = JSON.stringify({
+      contractAddress: currentVerificationData.address,
+      transactionHash: currentVerificationData.txHash,
+      network: NETWORK.label,
+      chainId: NETWORK.chainIdNumber,
+      compiler: "Solidity 0.8.30",
+      constructorArguments: currentVerificationData.constructorArguments,
+      source: CONTRACT_SOURCE_URL
+    }, null, 2);
+    try {
+      await navigator.clipboard.writeText(info);
+      $("copyVerification").textContent = "Copied ✓";
+      window.setTimeout(() => { $("copyVerification").textContent = "Copy Verification Info"; }, 1800);
+    } catch (error) {
+      alert(info);
+    }
+  }
+
+  function showDeploymentSuccess(receipt, details) {
+    const receiptStatus = String(receipt.status || "").toLowerCase();
+    if (receiptStatus && receiptStatus !== "0x1" && receiptStatus !== "1") throw new Error("Deployment transaction gagal dikonfirmasi.");
+    if (!receipt.contractAddress) throw new Error("Transaksi berhasil, tetapi alamat contract belum dikembalikan oleh wallet. Buka explorer untuk memeriksa hash transaksi.");
+
+    currentVerificationData = {
+      address: receipt.contractAddress,
+      txHash: details.txHash,
+      constructorArguments: details.constructorArguments,
+      name: details.name,
+      symbol: details.symbol,
+      rawSupply: details.rawSupply,
+      imageUri: details.imageUri,
+      metadataUri: details.metadataUri
+    };
+    clearPendingDeployment();
+    $("launchProgress").hidden = true;
+    $("launchSuccess").hidden = false;
+    $("contractAddress").textContent = receipt.contractAddress;
+    $("explorerLink").href = explorerAddressUrl(receipt.contractAddress);
+    $("verificationLink").href = `${explorerAddressUrl(receipt.contractAddress)}?tab=contract`;
+    const successImageWrap = $("successTokenImageWrap");
+    if (selectedImageDataUrl || details.imageUri) {
+      $("successTokenImage").src = selectedImageDataUrl || toGatewayUrl(details.imageUri);
+      $("successTokenImage").alt = details.name ? `${details.name} image preview` : "Token image preview";
+      successImageWrap.hidden = false;
+    } else {
+      successImageWrap.hidden = true;
+    }
+    const metadataBox = $("successMetadata");
+    if (details.imageUri || details.metadataUri) {
+      metadataBox.hidden = false;
+      setText("successImageUri", details.imageUri || "—");
+      setText("successMetadataUri", details.metadataUri || "—");
+    } else {
+      metadataBox.hidden = true;
+    }
+    $("copyAddress").onclick = copyContractAddress;
+    $("copyVerification").onclick = copyVerificationInfo;
+    $("launchSuccess").scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function recoverPendingDeployment() {
+    if (!pendingDeployment || !activeProvider) return;
+    if (pendingDeployment.account && account && pendingDeployment.account.toLowerCase() !== account.toLowerCase()) {
+      alert("Hubungkan wallet yang sama dengan wallet pembuat transaksi.");
+      return;
+    }
+    $("launchProgress").hidden = false;
+    $("launchSuccess").hidden = true;
+    setText("progressTitle", "Checking saved transaction…");
+    setText("progressText", `Memeriksa ${pendingDeployment.txHash}`);
+    try {
+      const receipt = await waitForReceipt(activeProvider, pendingDeployment.txHash);
+      showDeploymentSuccess(receipt, pendingDeployment);
+    } catch (error) {
+      $("launchProgress").hidden = true;
+      alert(getErrorMessage(error, "Recovery gagal"));
+    }
+  }
+
+  async function confirmMainnetDeployment(name, symbol, rawSupply, imageUri, metadataUri, gas) {
+    if (!IS_MAINNET) return;
+    const confirmation = window.prompt(
+      `MAINNET DEPLOYMENT\n\n${name} ($${symbol})\nSupply: ${rawSupply}\nOwner: ${account}\nImage: ${imageUri || "—"}\nMetadata: ${metadataUri || "—"}\nEstimated gas units: ${gas || "wallet estimate"}\n\nKetik MAINNET untuk melanjutkan.`,
+      ""
+    );
+    if (confirmation !== "MAINNET") throw new Error("Deployment mainnet dibatalkan. Ketik MAINNET dengan tepat untuk melanjutkan.");
+  }
+
   async function deployToken(event) {
     event.preventDefault();
     if (!account || !activeProvider) return;
@@ -301,10 +787,15 @@
       alert("Periksa kembali nama, ticker, dan total supply token.");
       return;
     }
+    if (pendingDeployment) {
+      renderPendingDeployment();
+      alert("Masih ada deployment tersimpan. Check & Recover transaksi tersebut atau Forget Record sebelum membuat deployment baru.");
+      return;
+    }
 
     try {
       await ensureNetwork();
-      if (!isTestnet()) throw new Error(`Wallet belum berada di Robinhood Chain Testnet (Chain ID ${TESTNET_CHAIN_ID}).`);
+      if (!isTargetNetwork()) throw new Error(`Wallet belum berada di ${NETWORK.label} (Chain ID ${NETWORK.chainIdNumber}).`);
 
       const accounts = await activeProvider.request({ method: "eth_accounts" });
       if (accounts && accounts[0] && accounts[0].toLowerCase() !== account.toLowerCase()) {
@@ -313,58 +804,56 @@
       }
 
       const balanceHex = await activeProvider.request({ method: "eth_getBalance", params: [account, "latest"] });
-      if (BigInt(balanceHex) === 0n) throw new Error("Wallet tidak memiliki ETH Robinhood Testnet untuk membayar gas deployment.");
+      if (BigInt(balanceHex) === 0n) throw new Error(`Wallet tidak memiliki ETH ${IS_MAINNET ? "Robinhood Chain mainnet" : "Robinhood Chain Testnet"} untuk membayar gas deployment.`);
       if (typeof ethers === "undefined") throw new Error("Library transaksi belum termuat. Muat ulang halaman lalu coba lagi.");
 
       const supply = ethers.parseUnits(rawSupply, 18);
       const iface = new ethers.Interface(TOKEN_ABI);
-      const constructorData = iface.encodeDeploy([name, symbol, supply, account]);
-      const deployData = TOKEN_BYTECODE + constructorData.slice(2);
 
       $("launchProgress").hidden = false;
       $("launchSuccess").hidden = true;
       $("progressTitle").textContent = "Preparing fixed-supply ERC-20…";
-      $("progressText").textContent = "Kontrak siap. Periksa estimasi gas dan konfirmasi transaksi di wallet.";
+      $("progressText").textContent = "Menyiapkan image dan metadata permanen sebelum transaksi wallet.";
+
+      const metadata = await prepareTokenMetadata(name, symbol, rawSupply);
+      const imageUri = metadata.imageUri;
+      const metadataUri = metadata.metadataUri;
+      const finalConstructorData = iface.encodeDeploy([name, symbol, supply, account]);
+      const finalDeployData = TOKEN_BYTECODE + finalConstructorData.slice(2);
 
       let gas;
       try {
-        gas = await activeProvider.request({ method: "eth_estimateGas", params: [{ from: account, data: deployData }] });
+        gas = await activeProvider.request({ method: "eth_estimateGas", params: [{ from: account, data: finalDeployData }] });
       } catch (error) {
         console.warn("Gas estimate failed; wallet will estimate again", error);
       }
 
-      const transaction = { from: account, data: deployData };
+      await confirmMainnetDeployment(name, symbol, rawSupply, imageUri, metadataUri, gas);
+      const transaction = { from: account, data: finalDeployData };
       if (gas) transaction.gas = gas;
       const txHash = await activeProvider.request({ method: "eth_sendTransaction", params: [transaction] });
+      savePendingDeployment({
+        txHash,
+        account,
+        name,
+        symbol,
+        rawSupply,
+        imageUri,
+        metadataUri,
+        constructorArguments: finalConstructorData.slice(2)
+      });
       $("progressTitle").textContent = "Waiting for confirmation…";
       $("progressText").textContent = "Transaction: " + txHash;
 
       const receipt = await waitForReceipt(activeProvider, txHash);
-      const receiptStatus = String(receipt.status || "").toLowerCase();
-      if (receiptStatus && receiptStatus !== "0x1" && receiptStatus !== "1") throw new Error("Deployment transaction gagal dikonfirmasi.");
-      if (!receipt.contractAddress) throw new Error("Transaksi berhasil, tetapi alamat contract belum dikembalikan oleh wallet. Buka explorer untuk memeriksa hash transaksi.");
-
-      $("launchProgress").hidden = true;
-      $("launchSuccess").hidden = false;
-      $("contractAddress").textContent = receipt.contractAddress;
-      $("explorerLink").href = CHAIN.blockExplorerUrls[0] + "/address/" + receipt.contractAddress;
-      const successImageWrap = $("successTokenImageWrap");
-      if (successImageWrap) {
-        if (selectedImageDataUrl) {
-          $("successTokenImage").src = selectedImageDataUrl;
-          $("successTokenImage").alt = selectedImageName ? `${name} image preview` : "Token image preview";
-          successImageWrap.hidden = false;
-        } else {
-          successImageWrap.hidden = true;
-        }
-      }
-      $("copyAddress").onclick = copyContractAddress;
-      $("launchSuccess").scrollIntoView({ behavior: "smooth" });
+      showDeploymentSuccess(receipt, { txHash, account, name, symbol, rawSupply, imageUri, metadataUri, constructorArguments: finalConstructorData.slice(2) });
     } catch (error) {
       $("launchProgress").hidden = true;
       console.error("Deploy error:", error);
       let message = getErrorMessage(error, "Deployment failed");
-      if (/insufficient funds/i.test(message)) message = "ETH Robinhood Testnet tidak cukup untuk gas deployment.";
+      if (/insufficient funds/i.test(message)) message = `ETH Robinhood Chain ${IS_MAINNET ? "mainnet" : "testnet"} tidak cukup untuk gas deployment.`;
+      ephemeralPinataJwt = "";
+      $("pinataJwt").value = "";
       alert(message);
     }
   }
@@ -378,8 +867,16 @@
   $("refreshWallets").addEventListener("click", scanWallets);
   $("getWalletBtn").addEventListener("click", () => window.open("https://ethereum.org/en/wallets/", "_blank", "noopener"));
   $("disconnectWallet").addEventListener("click", resetWalletState);
+  $("recoverDeployment").addEventListener("click", recoverPendingDeployment);
+  $("forgetDeployment").addEventListener("click", () => {
+    if (pendingDeployment && window.confirm("Hapus catatan hash ini dari browser? Transaksi blockchain tidak dihapus.")) clearPendingDeployment();
+  });
   $("tokenForm").addEventListener("submit", deployToken);
+  applyNetworkCopy();
+  bindAccessGate();
+  pendingDeployment = loadPendingDeployment();
   bindImagePicker();
+  renderPendingDeployment();
   renderWalletState();
   scanWallets();
 })();
