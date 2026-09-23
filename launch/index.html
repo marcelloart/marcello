@@ -1226,12 +1226,12 @@
         };
         if (navigator.gpu && !state.transcriberCpuOnly) options.device = 'webgpu';
         try {
-          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', options);
+          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny_timestamped', options);
         } catch (error) {
           if (!navigator.gpu || state.transcriberCpuOnly) throw error;
           state.transcriberCpuOnly = true;
           setTranscribeStatus('WebGPU tidak tersedia untuk model ini. Beralih ke pemrosesan CPU…');
-          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', {
+          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny_timestamped', {
             dtype: 'q8',
             progress_callback: options.progress_callback
           });
