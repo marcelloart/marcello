@@ -2,200 +2,1288 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#050814">
-  <meta name="robots" content="noindex,nofollow">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https://rpc.mainnet.chain.robinhood.com https://rpc.testnet.chain.robinhood.com https://api.pinata.cloud; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
-  <title>Private Token Launch — MarcelloArt</title>
-  <meta name="description" content="Private fixed-supply token launcher for Robinhood Chain.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b16">
+  <meta name="description" content="Smart Video Clipper MarcelloArt untuk memilih bagian video, membuat overlay, dan mengekspor klip pendek.">
+  <meta name="robots" content="index,follow">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="stylesheet" href="/styles.css?v=20260921-mainnet1">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js" integrity="sha384-OwtfwhPoP4aGLIw192UbPWjNbSkb7AllEbIhEJ01Yp8MxhNLLNUMA+DSjh6Zct05" crossorigin="anonymous" defer></script>
+  <link rel="canonical" href="https://marcelloart.site/launch/">
+  <title>Smart Video Clipper | MarcelloArt</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b16;
+      --bg-2: #0b1121;
+      --panel: rgba(16, 25, 47, .86);
+      --panel-2: #101b33;
+      --line: rgba(159, 188, 255, .15);
+      --line-strong: rgba(159, 188, 255, .28);
+      --text: #f4f8ff;
+      --muted: #95a5c1;
+      --cyan: #66e6ff;
+      --blue: #6f86ff;
+      --pink: #e67bff;
+      --green: #70e3ae;
+      --yellow: #ffd36a;
+      --danger: #ff8f9f;
+      --shadow: 0 28px 100px rgba(0, 0, 0, .4);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 10% -10%, rgba(102, 230, 255, .13), transparent 34rem),
+        radial-gradient(circle at 94% 0%, rgba(230, 123, 255, .12), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .52; }
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -60px;
+      z-index: 20;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--cyan);
+      color: #06101d;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .skip-link:focus { top: 12px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(159, 188, 255, .12);
+      background: rgba(7, 11, 22, .82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: min(1180px, calc(100% - 40px));
+      min-height: 74px;
+      margin: 0 auto;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      place-items: center;
+      border: 1px solid rgba(102, 230, 255, .4);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(102, 230, 255, .22), rgba(111, 134, 255, .22));
+      color: var(--cyan);
+      box-shadow: 0 8px 25px rgba(102, 230, 255, .12);
+      font-size: 18px;
+    }
+    .brand small {
+      display: block;
+      margin-top: 1px;
+      color: #8295b4;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-actions a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .topbar-actions a:hover { color: #fff; }
+    .tool-chip, .eyebrow, .ai-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border: 1px solid rgba(102, 230, 255, .25);
+      border-radius: 999px;
+      background: rgba(102, 230, 255, .07);
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .tool-chip { padding: 9px 12px; }
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(330px, .9fr);
+      align-items: center;
+      gap: 70px;
+      min-height: 420px;
+      padding: 76px 0 50px;
+    }
+    .eyebrow { padding: 8px 11px; }
+    .hero h1 {
+      max-width: 720px;
+      margin: 18px 0 17px;
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: .98;
+      letter-spacing: -.065em;
+    }
+    .gradient-text {
+      background: linear-gradient(100deg, var(--cyan), #94b6ff 45%, var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-copy {
+      max-width: 660px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+    .hero-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      color: #c2cee3;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .hero-note span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 15px rgba(112, 227, 174, .75);
+    }
+    .hero-visual {
+      position: relative;
+      min-height: 280px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: linear-gradient(145deg, rgba(18, 35, 70, .9), rgba(11, 16, 31, .76));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero-visual::before, .hero-visual::after {
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+    .hero-visual::before {
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      top: -80px;
+      background: rgba(102, 230, 255, .22);
+    }
+    .hero-visual::after {
+      width: 190px;
+      height: 190px;
+      bottom: -100px;
+      left: -55px;
+      background: rgba(230, 123, 255, .16);
+    }
+    .hero-screen {
+      position: absolute;
+      inset: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 21px;
+      background: rgba(3, 8, 19, .64);
+    }
+    .hero-screen-top, .hero-screen-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .hero-screen-top small, .hero-screen-bottom small { color: #8fa7cb; font-size: 11px; }
+    .scan-ring {
+      display: grid;
+      width: 118px;
+      height: 118px;
+      margin: 0 auto;
+      place-items: center;
+      border: 1px solid rgba(102, 230, 255, .25);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(102, 230, 255, .15), rgba(102, 230, 255, .02) 60%, transparent 61%);
+      box-shadow: inset 0 0 30px rgba(102, 230, 255, .08), 0 0 50px rgba(102, 230, 255, .08);
+    }
+    .scan-ring b { font-size: 26px; letter-spacing: -.06em; }
+    .scan-ring span { display: block; color: var(--cyan); font-size: 9px; font-weight: 900; letter-spacing: .16em; text-align: center; }
+    .scan-bars { display: flex; align-items: end; gap: 5px; height: 26px; }
+    .scan-bars i {
+      display: block;
+      width: 6px;
+      border-radius: 99px;
+      background: linear-gradient(var(--cyan), var(--blue));
+      animation: bar 1.4s ease-in-out infinite alternate;
+    }
+    .scan-bars i:nth-child(1) { height: 11px; animation-delay: -.7s; }
+    .scan-bars i:nth-child(2) { height: 24px; animation-delay: -.2s; }
+    .scan-bars i:nth-child(3) { height: 16px; animation-delay: -.9s; }
+    .scan-bars i:nth-child(4) { height: 21px; animation-delay: -.4s; }
+    .scan-bars i:nth-child(5) { height: 13px; animation-delay: -.1s; }
+    @keyframes bar { to { transform: scaleY(.45); opacity: .62; } }
+    .workspace {
+      margin-bottom: 62px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(14, 23, 44, .94), rgba(9, 15, 29, .96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .workspace-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 25px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .workspace-head h2 {
+      margin: 7px 0 0;
+      font-size: 24px;
+      letter-spacing: -.035em;
+    }
+    .ghost-button, .secondary-button, .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .035);
+      color: #d5e0f3;
+      font-size: 13px;
+      font-weight: 850;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .ghost-button:hover, .secondary-button:hover { transform: translateY(-1px); border-color: rgba(102, 230, 255, .45); background: rgba(102, 230, 255, .07); }
+    .primary-button {
+      border-color: rgba(102, 230, 255, .48);
+      background: linear-gradient(135deg, #6de9ff, #8290ff);
+      color: #05101d;
+      box-shadow: 0 12px 30px rgba(102, 230, 255, .15);
+    }
+    .primary-button:hover { transform: translateY(-1px); box-shadow: 0 16px 34px rgba(102, 230, 255, .23); }
+    .upload-panel { padding: 29px; }
+    .drop-zone {
+      display: grid;
+      min-height: 230px;
+      place-items: center;
+      padding: 30px;
+      border: 1px dashed rgba(102, 230, 255, .38);
+      border-radius: 23px;
+      background:
+        linear-gradient(135deg, rgba(102, 230, 255, .055), rgba(230, 123, 255, .04)),
+        rgba(6, 12, 26, .72);
+      text-align: center;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+    .drop-zone:hover, .drop-zone.is-dragover {
+      border-color: var(--cyan);
+      background: rgba(102, 230, 255, .1);
+      transform: translateY(-1px);
+    }
+    .drop-zone input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .upload-icon {
+      display: grid;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 14px;
+      place-items: center;
+      border: 1px solid rgba(102, 230, 255, .3);
+      border-radius: 18px;
+      background: rgba(102, 230, 255, .09);
+      color: var(--cyan);
+      font-size: 28px;
+    }
+    .drop-zone strong { font-size: 19px; }
+    .drop-zone span { display: block; margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .file-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 15px;
+      padding: 13px 15px;
+      border: 1px solid rgba(112, 227, 174, .2);
+      border-radius: 14px;
+      background: rgba(112, 227, 174, .055);
+    }
+    .file-meta b { display: block; overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }
+    .file-meta small { color: #91aa9f; }
+    .file-error { margin-top: 12px; color: var(--danger); font-size: 13px; }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, .82fr);
+      gap: 22px;
+      padding: 0 29px 29px;
+    }
+    .preview-column, .control-column { min-width: 0; }
+    .preview-shell {
+      position: relative;
+      display: grid;
+      min-height: 540px;
+      place-items: center;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #050913;
+      overflow: hidden;
+    }
+    #previewCanvas {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      max-height: 600px;
+      border-radius: 14px;
+      background: #060a14;
+      box-shadow: 0 20px 55px rgba(0, 0, 0, .46);
+    }
+    #sourceVideo {
+      position: fixed;
+      left: -10000px;
+      top: -10000px;
+      width: 2px;
+      height: 2px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .preview-badge {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      padding: 7px 9px;
+      border: 1px solid rgba(102, 230, 255, .23);
+      border-radius: 8px;
+      background: rgba(4, 10, 22, .75);
+      color: var(--cyan);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .13em;
+    }
+    .preview-controls {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .play-button {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(102, 230, 255, .38);
+      border-radius: 50%;
+      background: rgba(102, 230, 255, .08);
+      color: var(--cyan);
+      font-size: 16px;
+    }
+    .time-readout { color: #c9d7ec; font-variant-numeric: tabular-nums; font-size: 12px; white-space: nowrap; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+    .seek-range { min-width: 0; }
+    .range-panel, .card {
+      margin-top: 15px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(17, 29, 55, .56);
+    }
+    .range-title, .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .range-title b, .card-title b { font-size: 14px; }
+    .range-title span { color: var(--cyan); font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 800; }
+    .timeline {
+      position: relative;
+      height: 28px;
+      margin: 11px 0 3px;
+    }
+    .timeline::before, .timeline-fill {
+      position: absolute;
+      top: 11px;
+      height: 6px;
+      border-radius: 99px;
+    }
+    .timeline::before {
+      right: 0;
+      left: 0;
+      background: rgba(159, 188, 255, .13);
+    }
+    .timeline-fill {
+      left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
+      box-shadow: 0 0 15px rgba(102, 230, 255, .2);
+    }
+    .timeline input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      background: transparent;
+      pointer-events: none;
+      appearance: none;
+    }
+    .timeline input::-webkit-slider-thumb {
+      width: 17px;
+      height: 17px;
+      border: 3px solid #0a1225;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(102, 230, 255, .8);
+      pointer-events: auto;
+      appearance: none;
+    }
+    .timeline input::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 3px solid #0a1225;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(102, 230, 255, .8);
+      pointer-events: auto;
+    }
+    .range-fields, .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .field { display: grid; gap: 6px; }
+    .field label, .check-label {
+      color: #a7b8d2;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+    .field input, .field select, .field textarea, .text-input {
+      width: 100%;
+      border: 1px solid rgba(159, 188, 255, .17);
+      border-radius: 10px;
+      outline: none;
+      background: rgba(5, 12, 27, .75);
+      color: #f4f8ff;
+    }
+    .field input, .field select, .text-input { min-height: 39px; padding: 8px 10px; }
+    .field textarea { min-height: 96px; padding: 10px; resize: vertical; line-height: 1.45; }
+    .field input:focus, .field select:focus, .field textarea:focus, .text-input:focus {
+      border-color: rgba(102, 230, 255, .7);
+      box-shadow: 0 0 0 3px rgba(102, 230, 255, .1);
+    }
+    .control-column .card:first-child { margin-top: 0; }
+    .card-title { margin-bottom: 9px; }
+    .card-title small { color: #7f94b6; font-size: 10px; }
+    .ai-pill { padding: 7px 9px; border-color: rgba(230, 123, 255, .3); background: rgba(230, 123, 255, .08); color: #f0a4ff; }
+    .card-copy { margin: 0 0 13px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .scan-button { width: 100%; margin-bottom: 13px; }
+    .suggestions { display: grid; gap: 9px; }
+    .empty-state {
+      padding: 17px;
+      border: 1px dashed rgba(159, 188, 255, .19);
+      border-radius: 12px;
+      color: #7f94b6;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .suggestion {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(159, 188, 255, .14);
+      border-radius: 13px;
+      background: rgba(4, 11, 24, .54);
+      color: inherit;
+      text-align: left;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+    .suggestion:hover, .suggestion.is-selected {
+      border-color: rgba(102, 230, 255, .55);
+      background: rgba(102, 230, 255, .08);
+      transform: translateY(-1px);
+    }
+    .suggestion-head, .suggestion-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .suggestion-head b { font-size: 13px; }
+    .score { color: var(--green); font-size: 11px; font-weight: 900; }
+    .suggestion-meta { margin-top: 4px; color: #8195b5; font-size: 11px; }
+    .suggestion-meta span:last-child { color: #b9c7dc; }
+    .overlay-card { display: grid; gap: 12px; }
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #c6d3e7;
+      letter-spacing: 0;
+    }
+    .check-label input { width: 16px; height: 16px; accent-color: var(--cyan); }
+    .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .status-line {
+      min-height: 18px;
+      color: #89a0c1;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .status-line.is-success { color: var(--green); }
+    .status-line.is-error { color: var(--danger); }
+    .download-link {
+      display: none;
+      width: 100%;
+      margin-top: 1px;
+      padding: 10px;
+      border: 1px solid rgba(112, 227, 174, .32);
+      border-radius: 10px;
+      background: rgba(112, 227, 174, .08);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      text-decoration: none;
+    }
+    .download-link.is-visible { display: block; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding-bottom: 70px;
+    }
+    .info-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(13, 22, 43, .62);
+    }
+    .info-card b { display: block; margin-bottom: 7px; font-size: 14px; }
+    .info-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .info-number { color: var(--cyan); font-size: 11px; font-weight: 900; letter-spacing: .12em; }
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 24px 0 35px;
+      color: #7e91ae;
+      font-size: 12px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+    .footer a { color: #aabbd3; font-weight: 800; text-decoration: none; }
+    .footer a:hover { color: #fff; }
+    [hidden] { display: none !important; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 52px; }
+      .hero-visual { min-height: 240px; }
+      .editor-grid { grid-template-columns: 1fr; }
+      .preview-shell { min-height: 440px; }
+      .control-column .card:first-child { margin-top: 15px; }
+    }
+    @media (max-width: 620px) {
+      .topbar-inner, .shell, .footer-inner { width: min(100% - 28px, 1180px); }
+      .topbar-inner { min-height: 65px; }
+      .tool-chip { display: none; }
+      .topbar-actions a { font-size: 12px; }
+      .hero { min-height: auto; padding: 43px 0 32px; }
+      .hero h1 { font-size: clamp(40px, 13vw, 60px); }
+      .hero-copy { font-size: 15px; }
+      .hero-screen { inset: 19px; }
+      .workspace-head { padding: 20px; }
+      .workspace-head h2 { font-size: 20px; }
+      .upload-panel { padding: 20px; }
+      .editor-grid { padding: 0 20px 20px; }
+      .preview-shell { min-height: 390px; padding: 12px; }
+      #previewCanvas { max-height: 480px; }
+      .preview-controls { grid-template-columns: auto 1fr; }
+      .time-readout { grid-column: 2; }
+      .info-grid { grid-template-columns: 1fr; padding-bottom: 46px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
 </head>
-<body class="launch-page">
-  <div id="accessGate" class="launch-gate">
-    <div class="launch-gate-card">
-      <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>PRIVATE LAB</small></span></a>
-      <span class="launch-lock">PRIVATE ACCESS</span>
-      <h1>Token Launch Lab</h1>
-      <p id="accessGateText">Masukkan access code untuk membuka workspace token.</p>
-      <form id="accessForm">
-        <label for="accessCode">Access Code</label>
-        <div class="launch-code-row">
-          <input id="accessCode" type="password" autocomplete="off" required placeholder="••••••••••••">
-          <button class="btn btn-primary" type="submit">Unlock →</button>
-        </div>
-        <p id="accessError" class="launch-error" hidden>Kode akses tidak valid.</p>
-      </form>
-      <small>Gate ini hanya membatasi tampilan di browser. Jangan pernah memasukkan private key ke website.</small>
-    </div>
-  </div>
-
-  <div id="launchApp" hidden>
-    <nav class="nav">
-      <div class="wrap nav-inner">
-        <a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>TOKEN LAB</small></span></a>
-        <div class="nav-links">
-          <span id="networkBadge" class="launch-testnet-pill">ROBINHOOD MAINNET</span>
-          <a id="networkModeLink" class="launch-nav-btn" href="/launch/?network=testnet">Testnet QA</a>
-          <button id="lockBtn" class="launch-nav-btn" type="button">Lock</button>
-        </div>
+<body>
+  <a class="skip-link" href="#main-content">Lewati ke editor</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">✦</span>
+        <span>MarcelloArt<small>CREATIVE TOOLS</small></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="tool-chip">Smart Video Clipper</span>
+        <a href="/">Kembali ke situs utama →</a>
       </div>
-    </nav>
+    </div>
+  </header>
 
-    <main class="wrap launch-main">
-      <section class="launch-hero">
+  <main id="main-content">
+    <div class="shell">
+      <section class="hero" aria-labelledby="page-title">
         <div>
-          <span class="eyebrow"><span class="dot"></span> PRIVATE TOKEN LAUNCHER</span>
-          <h1>Build. Sign.<br><span class="gradient-text">Launch onchain.</span></h1>
-          <p id="heroDescription" class="lead">Buat ERC-20 fixed-supply di Robinhood Chain mainnet. Website tidak meminta atau menyimpan private key; transaksi ditandatangani langsung melalui wallet Anda.</p>
+          <span class="eyebrow">EDIT · SCORE · EXPORT</span>
+          <h1 id="page-title">Temukan momen kuat dari setiap <span class="gradient-text">video.</span></h1>
+          <p class="hero-copy">Pilih bagian video secara manual, minta sistem memberi beberapa rekomendasi momen menarik, lalu buat text overlay dan caption yang siap untuk Shorts, Reels, atau TikTok.</p>
+          <div class="hero-note"><span></span> Video tetap diproses di perangkat Anda pada versi awal ini.</div>
         </div>
-        <div class="launch-network-card">
-          <span>NETWORK</span>
-          <strong id="networkName">Robinhood Chain</strong>
-          <code id="networkChainId">Chain ID 4663</code>
-          <small id="networkGas">Gas token: ETH</small>
-          <div class="launch-network-actions">
-            <a id="networkFaucetLink" class="btn btn-secondary" href="https://faucet.testnet.chain.robinhood.com/add-chain" target="_blank" rel="noopener" hidden>Get testnet ETH ↗</a>
-            <a id="networkExplorerLink" class="launch-network-link" href="https://robinhoodchain.blockscout.com/" target="_blank" rel="noopener">Open Explorer ↗</a>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-screen">
+            <div class="hero-screen-top"><small>SMART SCAN / OFFLINE</small><div class="scan-bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+            <div class="scan-ring"><div><b>86</b><span>POTENSI</span></div></div>
+            <div class="hero-screen-bottom"><small>Hook awal</small><small>00:00 — 00:18</small></div>
           </div>
-          <small id="networkRpcNote" class="launch-small">Wallet/provider RPC digunakan untuk membaca status dan mengirim transaksi.</small>
         </div>
       </section>
 
-      <section class="launch-grid">
-        <div class="launch-panel">
-          <div class="launch-panel-head">
-            <div><span class="feature-index">01 · WALLET</span><h2>Connect Wallet</h2></div>
-            <span id="walletState" class="launch-status">Not connected</span>
-          </div>
-          <p id="walletDescription">Gunakan browser wallet EVM seperti MetaMask. Network akan diarahkan ke Robinhood Chain mainnet.</p>
-          <div class="wallet-actions">
-            <button id="connectWallet" class="btn btn-primary" type="button">Connect Wallet</button>
-            <button id="disconnectWallet" class="btn btn-secondary wallet-disconnect" type="button" hidden>Disconnect</button>
-          </div>
+      <section class="workspace" aria-labelledby="editor-title">
+        <div class="workspace-head">
+          <div><span class="eyebrow">EDITOR</span><h2 id="editor-title">Buat klip pertamamu</h2></div>
+          <button class="ghost-button" id="resetButton" type="button">Reset</button>
+        </div>
 
-          <div id="walletPicker" class="wallet-picker-overlay" hidden>
-            <div class="wallet-picker wallet-connect-layout">
-              <button id="closeWalletPicker" class="wallet-modal-close" type="button" aria-label="Close">×</button>
-              <div class="wallet-list-pane">
-                <h3>Connect a Wallet</h3>
-                <div class="wallet-section-label">Installed</div>
-                <div id="detectedWallets" class="detected-wallets"><div class="wallet-detecting">Detecting installed wallets…</div></div>
-                <div class="wallet-section-label wallet-popular-label">Popular</div>
-                <div class="wallet-popular">
-                  <div>🦊 <span>MetaMask</span></div>
-                  <div>🐰 <span>Rabby Wallet</span></div>
-                  <div>◇ <span>WalletConnect</span></div>
-                  <div>OKX <span>OKX Wallet</span></div>
-                  <div>◆ <span>Binance Wallet</span></div>
-                </div>
-                <button id="refreshWallets" class="wallet-refresh" type="button">↻ Scan ulang wallet</button>
+        <div class="upload-panel" id="uploadPanel">
+          <label class="drop-zone" id="dropZone" for="videoInput">
+            <input id="videoInput" type="file" accept="video/*">
+            <span class="upload-icon">↑</span>
+            <strong>Pilih video atau tarik ke sini</strong>
+            <span>MP4, WebM, MOV · tidak diunggah ke server</span>
+          </label>
+          <div class="file-meta" id="fileMeta" hidden>
+            <div><b id="fileName">—</b><small id="fileDetails">—</small></div>
+            <button class="ghost-button" id="changeVideoButton" type="button">Ganti video</button>
+          </div>
+          <div class="file-error" id="fileError" role="alert" hidden></div>
+        </div>
+
+        <div class="editor-grid" id="editor" hidden>
+          <div class="preview-column">
+            <div class="preview-shell">
+              <canvas id="previewCanvas" width="720" height="1280" aria-label="Preview video dengan overlay"></canvas>
+              <video id="sourceVideo" playsinline preload="metadata"></video>
+              <span class="preview-badge">LIVE PREVIEW</span>
+            </div>
+            <div class="preview-controls">
+              <button class="play-button" id="playButton" type="button" aria-label="Putar video">▶</button>
+              <input class="seek-range" id="seekRange" type="range" min="0" max="1" step=".01" value="0" aria-label="Posisi video">
+              <span class="time-readout"><span id="currentTime">00:00</span> / <span id="duration">00:00</span></span>
+            </div>
+            <div class="range-panel">
+              <div class="range-title"><b>Rentang klip</b><span id="rangeLabel">00:00 — 00:15</span></div>
+              <div class="timeline" aria-label="Pilih rentang klip">
+                <div class="timeline-fill" id="timelineFill"></div>
+                <input id="startRange" type="range" min="0" max="1" step=".01" value="0" aria-label="Waktu mulai">
+                <input id="endRange" type="range" min="0" max="1" step=".01" value="1" aria-label="Waktu selesai">
               </div>
-              <div class="wallet-info-pane">
-                <h3>What is a Wallet?</h3>
-                <div class="wallet-edu-item"><span class="wallet-edu-icon">◈</span><div><b>A Home for your Digital Assets</b><p>Wallets are used to send, receive, store, and display digital assets like Ethereum and tokens.</p></div></div>
-                <div class="wallet-edu-item"><span class="wallet-edu-icon">◐</span><div><b>A New Way to Log In</b><p>Instead of creating new accounts and passwords, connect your wallet directly to this launchpad.</p></div></div>
-                <div class="wallet-edu-actions"><button type="button" id="getWalletBtn">Get a Wallet</button><a href="https://ethereum.org/en/wallets/" target="_blank" rel="noopener">Learn More</a></div>
+              <div class="range-fields">
+                <div class="field"><label for="startNumber">Mulai (detik)</label><input id="startNumber" type="number" min="0" step=".1" value="0"></div>
+                <div class="field"><label for="endNumber">Selesai (detik)</label><input id="endNumber" type="number" min=".1" step=".1" value="15"></div>
               </div>
             </div>
           </div>
 
-          <div id="walletInfo" class="launch-wallet-info" hidden>
-            <span>Address</span><code id="walletAddress"></code>
-            <span>Network</span><b id="walletNetwork">Robinhood Chain</b>
-          </div>
-        </div>
-
-        <div class="launch-panel">
-          <div class="launch-panel-head">
-            <div><span class="feature-index">02 · TOKEN</span><h2>Token Details</h2></div>
-          </div>
-          <form id="tokenForm" class="launch-form">
-            <label>Token Name<input id="tokenName" maxlength="40" placeholder="Example Token" required></label>
-            <label>Ticker / Symbol<input id="tokenSymbol" maxlength="10" placeholder="EXMPL" required></label>
-            <label>Total Supply<input id="tokenSupply" type="text" inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="1000000000" required></label>
-            <label>Token Description <span class="launch-optional">optional</span><textarea id="tokenDescription" maxlength="280" rows="3" placeholder="Community token on Robinhood Chain. Not affiliated with Robinhood."></textarea></label>
-
-            <div class="launch-image-field">
-              <span class="launch-field-label">Token Image / Logo <strong class="launch-required">required</strong></span>
-              <div id="tokenImageDropzone" class="launch-image-dropzone">
-                <input id="tokenImage" class="launch-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
-                <label for="tokenImage" class="launch-image-picker">
-                  <span id="tokenImagePlaceholder" class="launch-image-placeholder">＋</span>
-                  <img id="tokenImagePreview" class="launch-image-preview" alt="Token image preview" hidden>
-                  <span class="launch-image-copy"><b id="tokenImageTitle">Upload token image</b><small id="tokenImageMeta">PNG, JPG, WebP, atau GIF · maksimal 10 MB</small></span>
-                </label>
-                <button id="removeTokenImage" class="launch-image-remove" type="button" hidden>Remove</button>
+          <aside class="control-column">
+            <section class="card">
+              <div class="card-title"><b>Rekomendasi momen</b><span class="ai-pill">Smart scan</span></div>
+              <p class="card-copy">Sistem memberi skor awal dari durasi, posisi momen, dan naskah opsional. Skor bukan jaminan video akan viral.</p>
+              <button class="primary-button scan-button" id="scanButton" type="button">✦ Analisis video</button>
+              <div class="suggestions" id="suggestions">
+                <div class="empty-state">Upload video lalu tekan <b>Analisis video</b> untuk melihat beberapa kandidat klip.</div>
               </div>
-              <p id="tokenImageError" class="launch-error" hidden></p>
-              <label class="launch-subfield" for="tokenImageUri">Existing image URI <span class="launch-optional">IPFS/HTTPS</span><input id="tokenImageUri" type="text" autocomplete="off" placeholder="ipfs://... atau https://..." spellcheck="false"></label>
-              <details id="ipfsUploadDetails" class="launch-ipfs-box">
-                <summary>Make image permanent on IPFS <span>recommended for mainnet</span></summary>
-                <p>Pin image dan metadata secara permanen sebelum deploy. JWT hanya dipakai di browser selama sesi ini dan tidak disimpan.</p>
-                <label class="launch-subfield" for="pinataJwt">Temporary Pinata JWT<input id="pinataJwt" type="password" autocomplete="off" placeholder="Paste restricted, one-use JWT" spellcheck="false"></label>
-                <div class="launch-ipfs-actions"><button id="uploadTokenImage" class="btn btn-secondary" type="button">Upload image to IPFS</button><span id="tokenImageStorageStatus" class="launch-storage-status">Belum diunggah</span></div>
-                <small>Gunakan JWT terbatas untuk pinFileToIPFS dan pinJSONToIPFS, bukan admin key utama.</small>
-              </details>
-              <label class="launch-subfield" for="tokenMetadataUri">Metadata URI <span class="launch-optional">diisi otomatis setelah pinning</span><input id="tokenMetadataUri" type="text" autocomplete="off" placeholder="ipfs://... atau https://..." spellcheck="false"></label>
-              <p class="launch-small">Catatan: kontrak ERC-20 ini tidak memiliki fungsi <code>tokenURI</code>. URI disimpan sebagai hasil metadata untuk listing atau explorer yang mendukungnya.</p>
-            </div>
+            </section>
 
-            <div class="launch-summary">
-              <div><span>Decimals</span><b>18</b></div>
-              <div><span>Supply Type</span><b>Fixed</b></div>
-              <div><span>Owner</span><b>Connected wallet</b></div>
-            </div>
-            <button id="deployToken" class="btn btn-primary launch-deploy" type="submit" disabled>Connect wallet first</button>
-            <p id="deployHelp" class="launch-small">Deployment membutuhkan ETH untuk gas. Token tidak memiliki fungsi mint tambahan, pajak transaksi, blacklist, atau transfer restriction.</p>
-          </form>
+            <section class="card overlay-card">
+              <div class="card-title"><b>Overlay & caption</b><small>Atur sebelum ekspor</small></div>
+              <div class="field"><label for="formatSelect">Format output</label><select id="formatSelect"><option value="vertical">9:16 · Shorts / Reels / TikTok</option><option value="square">1:1 · Feed</option><option value="landscape">16:9 · YouTube</option></select></div>
+              <div class="settings-grid">
+                <div class="field"><label for="overlayStyle">Gaya teks</label><select id="overlayStyle"><option value="neon">Neon punch</option><option value="clean">Clean white</option><option value="pop">Pop yellow</option></select></div>
+                <div class="field"><label for="overlayPosition">Posisi hook</label><select id="overlayPosition"><option value="top">Atas</option><option value="center">Tengah</option><option value="bottom">Bawah</option></select></div>
+              </div>
+              <div class="field"><label for="overlayInput">Judul atau hook overlay</label><input class="text-input" id="overlayInput" type="text" maxlength="90" placeholder="Contoh: Tunggu sampai bagian terakhir 👀"></div>
+              <div class="field"><label for="scriptInput">Naskah / caption otomatis (opsional)</label><textarea id="scriptInput" placeholder="Tempel transkrip atau tulis kalimat caption di sini. Sistem akan membaginya menjadi beberapa caption selama durasi klip."></textarea></div>
+              <label class="check-label"><input id="captionToggle" type="checkbox" checked> Tampilkan caption di bagian bawah</label>
+              <label class="check-label"><input id="watermarkToggle" type="checkbox" checked> Tambahkan watermark MarcelloArt</label>
+              <div class="button-row">
+                <button class="secondary-button" id="generateButton" type="button">✦ Buat otomatis</button>
+                <button class="primary-button" id="exportButton" type="button">Export klip</button>
+              </div>
+              <div class="status-line" id="exportStatus" role="status"></div>
+              <a class="download-link" id="downloadLink" href="#" download>Download hasil klip ↓</a>
+            </section>
+          </aside>
         </div>
       </section>
 
-      <section id="pendingDeployment" class="launch-panel launch-pending" hidden>
-        <span class="feature-index">RECOVERABLE TRANSACTION</span>
-        <h2>Deployment masih tersimpan.</h2>
-        <p id="pendingDeploymentText">Hash transaksi ditemukan. Periksa statusnya sebelum membuat deployment baru.</p>
-        <code id="pendingTxHash"></code>
-        <div class="hero-actions">
-          <a id="pendingExplorerLink" class="btn btn-secondary" target="_blank" rel="noopener">Open Transaction ↗</a>
-          <button id="recoverDeployment" class="btn btn-primary" type="button">Check & Recover</button>
-          <button id="forgetDeployment" class="btn btn-secondary" type="button">Forget Record</button>
-        </div>
+      <section class="info-grid" aria-label="Informasi fitur">
+        <article class="info-card"><span class="info-number">01 · PILIH</span><b>Kontrol tetap di tangan Anda</b><p>Atur titik mulai dan selesai sendiri melalui timeline atau angka yang presisi.</p></article>
+        <article class="info-card"><span class="info-number">02 · SKOR</span><b>Temukan kandidat lebih cepat</b><p>Smart scan membantu memprioritaskan hook, bagian inti, dan payoff yang layak diperiksa.</p></article>
+        <article class="info-card"><span class="info-number">03 · EXPORT</span><b>Siap untuk video pendek</b><p>Preview dengan format vertikal, overlay, caption, dan watermark sebelum menyimpan hasil.</p></article>
       </section>
+    </div>
+  </main>
 
-      <section id="launchProgress" class="launch-panel launch-progress" hidden>
-        <span class="feature-index">DEPLOYMENT</span>
-        <h2 id="progressTitle">Preparing contract…</h2>
-        <p id="progressText">Jangan tutup halaman sampai wallet selesai memproses transaksi.</p>
-        <div class="launch-loader"></div>
-      </section>
+  <footer class="footer">
+    <div class="footer-inner"><span>© 2026 MarcelloArt · Smart Video Clipper</span><span><a href="/">MarcelloArt</a> · Video diproses lokal pada browser</span></div>
+  </footer>
 
-      <section id="launchSuccess" class="launch-panel launch-success" hidden>
-        <span class="feature-index">DEPLOYED</span>
-        <h2>Token berhasil dibuat.</h2>
-        <div id="successTokenImageWrap" class="launch-success-image" hidden><img id="successTokenImage" alt="Token image preview"></div>
-        <p>Contract address:</p>
-        <code id="contractAddress"></code>
-        <div id="successMetadata" class="launch-metadata-box" hidden>
-          <span>Image URI</span><code id="successImageUri"></code>
-          <span>Metadata URI</span><code id="successMetadataUri"></code>
-        </div>
-        <div class="hero-actions">
-          <a id="explorerLink" class="btn btn-primary" target="_blank" rel="noopener">View on Explorer ↗</a>
-          <button id="copyAddress" class="btn btn-secondary" type="button">Copy Address</button>
-          <button id="copyVerification" class="btn btn-secondary" type="button">Copy Verification Info</button>
-        </div>
-        <p id="verificationNote" class="launch-small">Verifikasi source dilakukan di Blockscout menggunakan compiler Solidity 0.8.30 dan constructor arguments dari deployment ini.</p>
-        <a id="verificationLink" class="launch-network-link" target="_blank" rel="noopener">Open contract verification ↗</a>
-      </section>
+  <script>
+    (() => {
+      const $ = (selector) => document.querySelector(selector);
+      const els = {
+        videoInput: $('#videoInput'),
+        dropZone: $('#dropZone'),
+        uploadPanel: $('#uploadPanel'),
+        fileMeta: $('#fileMeta'),
+        fileName: $('#fileName'),
+        fileDetails: $('#fileDetails'),
+        fileError: $('#fileError'),
+        changeVideoButton: $('#changeVideoButton'),
+        resetButton: $('#resetButton'),
+        editor: $('#editor'),
+        canvas: $('#previewCanvas'),
+        video: $('#sourceVideo'),
+        playButton: $('#playButton'),
+        seekRange: $('#seekRange'),
+        currentTime: $('#currentTime'),
+        duration: $('#duration'),
+        rangeLabel: $('#rangeLabel'),
+        startRange: $('#startRange'),
+        endRange: $('#endRange'),
+        startNumber: $('#startNumber'),
+        endNumber: $('#endNumber'),
+        timelineFill: $('#timelineFill'),
+        scanButton: $('#scanButton'),
+        suggestions: $('#suggestions'),
+        formatSelect: $('#formatSelect'),
+        overlayStyle: $('#overlayStyle'),
+        overlayPosition: $('#overlayPosition'),
+        overlayInput: $('#overlayInput'),
+        scriptInput: $('#scriptInput'),
+        captionToggle: $('#captionToggle'),
+        watermarkToggle: $('#watermarkToggle'),
+        generateButton: $('#generateButton'),
+        exportButton: $('#exportButton'),
+        exportStatus: $('#exportStatus'),
+        downloadLink: $('#downloadLink')
+      };
+      const ctx = els.canvas.getContext('2d');
+      const state = {
+        objectUrl: null,
+        downloadUrl: null,
+        duration: 0,
+        start: 0,
+        end: 0,
+        selectedCandidate: null,
+        drawFrameId: 0,
+        exporting: false,
+        candidates: []
+      };
+      const formats = {
+        vertical: [720, 1280],
+        square: [1080, 1080],
+        landscape: [1280, 720]
+      };
 
-      <section id="launchWarning" class="launch-warning"><strong id="warningTitle">Mainnet warning.</strong> <span id="warningText">Transaksi mainnet memakai ETH nyata dan tidak dapat dibatalkan. Pastikan nama, ticker, supply, gambar, dan wallet owner sudah benar. Token ini dibuat pihak ketiga dan tidak resmi atau berafiliasi dengan Robinhood.</span></section>
-    </main>
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+      const formatTime = (seconds) => {
+        const safe = Math.max(0, Number(seconds) || 0);
+        const mins = Math.floor(safe / 60);
+        const secs = Math.floor(safe % 60);
+        return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+      };
+      const setStatus = (message, type) => {
+        els.exportStatus.textContent = message || '';
+        els.exportStatus.className = 'status-line' + (type ? ' is-' + type : '');
+      };
+      const setError = (message) => {
+        els.fileError.textContent = message || '';
+        els.fileError.hidden = !message;
+      };
+      const wrapText = (text, maxChars) => {
+        const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+        const lines = [];
+        let line = '';
+        words.forEach((word) => {
+          const next = line ? line + ' ' + word : word;
+          if (next.length > maxChars && line) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = next;
+          }
+        });
+        if (line) lines.push(line);
+        return lines.slice(0, 5);
+      };
+      const roundRect = (context, x, y, width, height, radius) => {
+        const r = Math.min(radius, width / 2, height / 2);
+        context.beginPath();
+        context.moveTo(x + r, y);
+        context.arcTo(x + width, y, x + width, y + height, r);
+        context.arcTo(x + width, y + height, x, y + height, r);
+        context.arcTo(x, y + height, x, y, r);
+        context.arcTo(x, y, x + width, y, r);
+        context.closePath();
+      };
+      const currentCaption = () => {
+        if (!els.captionToggle.checked) return '';
+        const text = els.scriptInput.value.trim();
+        if (!text) return '';
+        const parts = text.split(/\n+/).flatMap((part) => wrapText(part, 42)).filter(Boolean);
+        if (!parts.length) return '';
+        const progress = state.end > state.start ? clamp((els.video.currentTime - state.start) / (state.end - state.start), 0, .999) : 0;
+        return parts[Math.floor(progress * parts.length)] || '';
+      };
+      const resizeCanvas = () => {
+        const size = formats[els.formatSelect.value] || formats.vertical;
+        els.canvas.width = size[0];
+        els.canvas.height = size[1];
+        drawFrame();
+      };
+      const drawPlaceholder = () => {
+        const w = els.canvas.width;
+        const h = els.canvas.height;
+        const gradient = ctx.createLinearGradient(0, 0, w, h);
+        gradient.addColorStop(0, '#101e3d');
+        gradient.addColorStop(1, '#080d1a');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = 'rgba(255,255,255,.86)';
+        ctx.textAlign = 'center';
+        ctx.font = '800 ' + Math.max(20, Math.round(w * .055)) + 'px Inter, sans-serif';
+        ctx.fillText('Upload video untuk memulai', w / 2, h / 2);
+      };
+      const drawFrame = () => {
+        const w = els.canvas.width;
+        const h = els.canvas.height;
+        if (!els.video.videoWidth || !els.video.videoHeight || els.video.readyState < 2) {
+          drawPlaceholder();
+          return;
+        }
+        const sourceRatio = els.video.videoWidth / els.video.videoHeight;
+        const targetRatio = w / h;
+        let sx = 0;
+        let sy = 0;
+        let sw = els.video.videoWidth;
+        let sh = els.video.videoHeight;
+        if (sourceRatio > targetRatio) {
+          sw = els.video.videoHeight * targetRatio;
+          sx = (els.video.videoWidth - sw) / 2;
+        } else {
+          sh = els.video.videoWidth / targetRatio;
+          sy = (els.video.videoHeight - sh) / 2;
+        }
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(els.video, sx, sy, sw, sh, 0, 0, w, h);
+        const shade = ctx.createLinearGradient(0, 0, 0, h);
+        shade.addColorStop(0, 'rgba(3, 7, 16, .5)');
+        shade.addColorStop(.27, 'rgba(3, 7, 16, 0)');
+        shade.addColorStop(.72, 'rgba(3, 7, 16, 0)');
+        shade.addColorStop(1, 'rgba(3, 7, 16, .72)');
+        ctx.fillStyle = shade;
+        ctx.fillRect(0, 0, w, h);
 
-    <footer class="footer"><div class="wrap footer-row"><div>© 2026 MarcelloArt · Private Token Lab</div><div class="footer-links"><a href="/">Beranda</a><a href="/privacy-policy.html">Privasi</a></div></div></footer>
-  </div>
+        const style = els.overlayStyle.value;
+        const accent = style === 'pop' ? '#ffd45e' : style === 'clean' ? '#ffffff' : '#7cecff';
+        const overlay = els.overlayInput.value.trim();
+        if (overlay) {
+          const fontSize = Math.max(27, Math.round(w * .073));
+          const lines = wrapText(overlay, w > 1000 ? 22 : 17);
+          ctx.font = '900 ' + fontSize + 'px Inter, ui-sans-serif, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const lineHeight = Math.round(fontSize * 1.05);
+          const blockHeight = lines.length * lineHeight + 30;
+          const position = els.overlayPosition.value;
+          const centerY = position === 'top' ? Math.round(h * .16) : position === 'bottom' ? Math.round(h * .78) : Math.round(h * .5);
+          const boxWidth = Math.min(w - 42, Math.max(230, Math.max(...lines.map((line) => ctx.measureText(line).width)) + 42));
+          ctx.fillStyle = style === 'clean' ? 'rgba(0,0,0,.52)' : style === 'pop' ? 'rgba(36,25,0,.72)' : 'rgba(2,18,33,.72)';
+          roundRect(ctx, (w - boxWidth) / 2, centerY - blockHeight / 2, boxWidth, blockHeight, 18);
+          ctx.fill();
+          ctx.strokeStyle = accent;
+          ctx.lineWidth = Math.max(2, Math.round(w * .003));
+          ctx.stroke();
+          ctx.fillStyle = accent;
+          lines.forEach((line, index) => ctx.fillText(line, w / 2, centerY - (lines.length - 1) * lineHeight / 2 + index * lineHeight));
+        }
 
-  <script src="/launch/launch.js?v=20260921-mainnet1" defer></script>
+        const caption = currentCaption();
+        if (caption) {
+          const captionSize = Math.max(20, Math.round(w * .037));
+          ctx.font = '800 ' + captionSize + 'px Inter, ui-sans-serif, sans-serif';
+          const captionLines = wrapText(caption, w > 1000 ? 44 : 30);
+          const captionLineHeight = Math.round(captionSize * 1.25);
+          const captionHeight = captionLines.length * captionLineHeight + 24;
+          const captionY = els.overlayPosition.value === 'bottom' ? Math.round(h * .62) : Math.round(h * .88);
+          const captionWidth = Math.min(w - 34, Math.max(220, Math.max(...captionLines.map((line) => ctx.measureText(line).width)) + 30));
+          ctx.fillStyle = 'rgba(0,0,0,.72)';
+          roundRect(ctx, (w - captionWidth) / 2, captionY - captionHeight / 2, captionWidth, captionHeight, 13);
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          captionLines.forEach((line, index) => ctx.fillText(line, w / 2, captionY - (captionLines.length - 1) * captionLineHeight / 2 + index * captionLineHeight));
+        }
+
+        if (els.watermarkToggle.checked) {
+          ctx.font = '800 ' + Math.max(13, Math.round(w * .022)) + 'px Inter, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = 'rgba(255,255,255,.78)';
+          ctx.fillText('MARCELLOART', w - 18, 16);
+        }
+      };
+      const startDrawLoop = () => {
+        cancelAnimationFrame(state.drawFrameId);
+        const loop = () => {
+          drawFrame();
+          if (!els.video.paused || state.exporting) state.drawFrameId = requestAnimationFrame(loop);
+        };
+        loop();
+      };
+      const updateTimeline = () => {
+        const duration = state.duration || 1;
+        const left = clamp(state.start / duration * 100, 0, 100);
+        const right = clamp(state.end / duration * 100, 0, 100);
+        els.timelineFill.style.left = left + '%';
+        els.timelineFill.style.width = Math.max(0, right - left) + '%';
+        els.rangeLabel.textContent = formatTime(state.start) + ' — ' + formatTime(state.end);
+        els.startRange.value = state.start;
+        els.endRange.value = state.end;
+        els.startNumber.value = state.start.toFixed(1);
+        els.endNumber.value = state.end.toFixed(1);
+      };
+      const setRange = (start, end, seekToStart) => {
+        const minimum = Math.min(.2, Math.max(.05, state.duration / 100));
+        let nextStart = clamp(Number(start) || 0, 0, Math.max(0, state.duration - minimum));
+        let nextEnd = clamp(Number(end) || state.duration, Math.min(state.duration, nextStart + minimum), state.duration);
+        if (nextEnd - nextStart < minimum) nextEnd = Math.min(state.duration, nextStart + minimum);
+        state.start = Number(nextStart.toFixed(2));
+        state.end = Number(nextEnd.toFixed(2));
+        updateTimeline();
+        if (seekToStart) {
+          els.video.currentTime = state.start;
+          els.seekRange.value = state.start;
+        }
+        drawFrame();
+      };
+      const updatePlaybackUI = () => {
+        const current = els.video.currentTime || 0;
+        els.currentTime.textContent = formatTime(current);
+        els.seekRange.value = current;
+        drawFrame();
+        if (!state.exporting && current >= state.end && !els.video.paused) {
+          els.video.pause();
+          els.video.currentTime = state.start;
+        }
+        els.playButton.textContent = els.video.paused ? '▶' : 'Ⅱ';
+        els.playButton.setAttribute('aria-label', els.video.paused ? 'Putar video' : 'Jeda video');
+      };
+      const playPreview = async () => {
+        if (!els.video.src) return;
+        if (els.video.paused) {
+          if (els.video.currentTime < state.start || els.video.currentTime >= state.end) els.video.currentTime = state.start;
+          try {
+            await els.video.play();
+            startDrawLoop();
+          } catch (error) {
+            setStatus('Browser menolak pemutaran otomatis. Tekan tombol putar lagi.', 'error');
+          }
+        } else {
+          els.video.pause();
+          drawFrame();
+        }
+      };
+      const candidateOverlay = (candidate) => {
+        const script = els.scriptInput.value.trim().replace(/\s+/g, ' ');
+        if (script) {
+          const firstSentence = script.split(/[.!?]/)[0].trim();
+          if (firstSentence.length > 4) return firstSentence.slice(0, 70) + (firstSentence.length > 70 ? '…' : '');
+        }
+        if (candidate.kind === 'hook') return 'Tunggu sampai bagian terakhir 👀';
+        if (candidate.kind === 'core') return 'Ini bagian yang paling penting';
+        return 'Worth it atau tidak?';
+      };
+      const applyCandidate = (candidate) => {
+        state.selectedCandidate = candidate;
+        setRange(candidate.start, candidate.end, true);
+        els.overlayInput.value = candidateOverlay(candidate);
+        [...els.suggestions.querySelectorAll('.suggestion')].forEach((node) => node.classList.toggle('is-selected', node.dataset.id === candidate.id));
+        setStatus('Kandidat dipilih. Anda masih bisa mengubah rentangnya.', 'success');
+        drawFrame();
+      };
+      const renderCandidates = () => {
+        els.suggestions.replaceChildren();
+        state.candidates.forEach((candidate) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'suggestion';
+          button.dataset.id = candidate.id;
+          button.innerHTML = '<span class="suggestion-head"><b></b><span class="score"></span></span><span class="suggestion-meta"><span></span><span></span></span>';
+          button.querySelector('b').textContent = candidate.title;
+          button.querySelector('.score').textContent = candidate.score + '% potensi';
+          button.querySelector('.suggestion-meta span:first-child').textContent = candidate.reason;
+          button.querySelector('.suggestion-meta span:last-child').textContent = formatTime(candidate.start) + ' — ' + formatTime(candidate.end);
+          button.addEventListener('click', () => applyCandidate(candidate));
+          els.suggestions.append(button);
+        });
+      };
+      const scanVideo = () => {
+        if (!state.duration) return;
+        const duration = state.duration;
+        const script = els.scriptInput.value.toLowerCase();
+        const keywordBoost = /(ternyata|rahasia|jangan|coba|wajib|viral|terbaik|akhir|penting|mengejutkan|tips|cara)/.test(script) ? 6 : 0;
+        const length = duration <= 12 ? duration : clamp(duration * .18, 8, 24);
+        const candidates = [];
+        const addCandidate = (start, end, title, reason, kind, score) => {
+          const safeStart = clamp(start, 0, Math.max(0, duration - .2));
+          const safeEnd = clamp(end, safeStart + Math.min(.2, duration), duration);
+          if (safeEnd - safeStart >= Math.min(1, duration)) candidates.push({ id: kind, start: Number(safeStart.toFixed(2)), end: Number(safeEnd.toFixed(2)), title, reason, kind, score: clamp(score + keywordBoost, 61, 96) });
+        };
+        addCandidate(0, Math.min(duration, length), 'Hook awal', 'Pembuka paling cepat menarik perhatian', 'hook', 84);
+        if (duration > 16) addCandidate(Math.max(0, duration * .5 - length / 2), Math.min(duration, duration * .5 + length / 2), 'Bagian inti', 'Posisi tengah sering memuat isi utama', 'core', 78);
+        if (duration > 10) addCandidate(Math.max(0, duration - length), duration, 'Payoff / penutup', 'Akhir video berpotensi menyimpan hasil atau punchline', 'payoff', 75);
+        state.candidates = candidates.filter((candidate, index, list) => list.findIndex((item) => item.start === candidate.start) === index);
+        renderCandidates();
+        setStatus('Smart scan selesai. Pilih kandidat untuk menerapkannya ke timeline.', 'success');
+      };
+      const makeAutomaticOverlay = () => {
+        const candidate = state.selectedCandidate || state.candidates[0] || { kind: 'hook' };
+        els.overlayInput.value = candidateOverlay(candidate);
+        if (!els.scriptInput.value.trim()) els.scriptInput.value = els.overlayInput.value;
+        drawFrame();
+        setStatus('Overlay dan caption dasar sudah dibuat. Silakan edit jika diperlukan.', 'success');
+      };
+      const loadVideo = (file) => {
+        if (!file) return;
+        if (!file.type.startsWith('video/')) {
+          setError('File tersebut bukan video. Pilih MP4, WebM, MOV, atau format video lain yang didukung browser.');
+          return;
+        }
+        setError('');
+        if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+        state.objectUrl = URL.createObjectURL(file);
+        state.selectedCandidate = null;
+        state.candidates = [];
+        els.video.src = state.objectUrl;
+        els.video.load();
+        els.fileName.textContent = file.name;
+        els.fileDetails.textContent = (file.size / 1024 / 1024).toFixed(1) + ' MB · menunggu metadata video…';
+        els.fileMeta.hidden = false;
+        els.editor.hidden = true;
+        setStatus('', '');
+      };
+      const onMetadata = () => {
+        if (!Number.isFinite(els.video.duration) || els.video.duration <= 0) {
+          setError('Video tidak dapat dibaca oleh browser ini. Coba MP4 H.264 atau WebM.');
+          return;
+        }
+        state.duration = els.video.duration;
+        state.start = 0;
+        state.end = Math.min(state.duration, state.duration <= 15 ? state.duration : 15);
+        els.duration.textContent = formatTime(state.duration);
+        els.seekRange.max = state.duration;
+        els.startRange.max = state.duration;
+        els.endRange.max = state.duration;
+        els.seekRange.value = 0;
+        els.fileDetails.textContent = formatTime(state.duration) + ' · siap diedit di perangkat Anda';
+        els.editor.hidden = false;
+        updateTimeline();
+        resizeCanvas();
+        els.video.currentTime = 0;
+        drawFrame();
+      };
+      const resetProject = () => {
+        if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+        if (state.downloadUrl) URL.revokeObjectURL(state.downloadUrl);
+        state.objectUrl = null;
+        state.downloadUrl = null;
+        state.duration = 0;
+        state.start = 0;
+        state.end = 0;
+        state.selectedCandidate = null;
+        state.candidates = [];
+        state.exporting = false;
+        els.video.pause();
+        els.video.removeAttribute('src');
+        els.video.load();
+        els.videoInput.value = '';
+        els.fileMeta.hidden = true;
+        els.editor.hidden = true;
+        els.fileError.hidden = true;
+        els.downloadLink.classList.remove('is-visible');
+        els.downloadLink.removeAttribute('href');
+        els.suggestions.innerHTML = '<div class="empty-state">Upload video lalu tekan <b>Analisis video</b> untuk melihat beberapa kandidat klip.</div>';
+        els.overlayInput.value = '';
+        els.scriptInput.value = '';
+        setStatus('', '');
+        drawPlaceholder();
+      };
+      const chooseMime = () => {
+        const choices = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+        return choices.find((type) => window.MediaRecorder && MediaRecorder.isTypeSupported(type)) || '';
+      };
+      const exportClip = async () => {
+        if (!els.video.src || state.exporting) return;
+        if (!window.MediaRecorder || !els.canvas.captureStream) {
+          setStatus('Browser ini belum mendukung ekspor video langsung. Coba Chrome atau Edge terbaru.', 'error');
+          return;
+        }
+        const mime = chooseMime();
+        if (!mime) {
+          setStatus('Format ekspor WebM tidak didukung oleh browser ini.', 'error');
+          return;
+        }
+        state.exporting = true;
+        els.exportButton.disabled = true;
+        els.generateButton.disabled = true;
+        els.playButton.disabled = true;
+        setStatus('Mengekspor klip… jangan tutup halaman.', '');
+        els.video.pause();
+        els.video.currentTime = state.start;
+        await new Promise((resolve) => {
+          const onSeeked = () => { els.video.removeEventListener('seeked', onSeeked); resolve(); };
+          els.video.addEventListener('seeked', onSeeked);
+        });
+        const canvasStream = els.canvas.captureStream(30);
+        const combined = new MediaStream();
+        canvasStream.getVideoTracks().forEach((track) => combined.addTrack(track));
+        if (typeof els.video.captureStream === 'function') {
+          els.video.captureStream().getAudioTracks().forEach((track) => combined.addTrack(track));
+        }
+        const chunks = [];
+        const recorder = new MediaRecorder(combined, { mimeType: mime });
+        const stopped = new Promise((resolve) => {
+          recorder.addEventListener('stop', resolve, { once: true });
+        });
+        recorder.addEventListener('dataavailable', (event) => {
+          if (event.data && event.data.size) chunks.push(event.data);
+        });
+        recorder.start(250);
+        try {
+          await els.video.play();
+        } catch (error) {
+          recorder.stop();
+          state.exporting = false;
+          setStatus('Browser menolak pemutaran video untuk ekspor. Tekan Export lagi.', 'error');
+          return;
+        }
+        const recordLoop = () => {
+          drawFrame();
+          const progress = clamp((els.video.currentTime - state.start) / Math.max(.1, state.end - state.start), 0, 1);
+          setStatus('Mengekspor klip… ' + Math.round(progress * 100) + '%', '');
+          if (els.video.currentTime >= state.end || els.video.ended) {
+            els.video.pause();
+            if (recorder.state !== 'inactive') recorder.stop();
+            return;
+          }
+          requestAnimationFrame(recordLoop);
+        };
+        recordLoop();
+        await stopped;
+        combined.getTracks().forEach((track) => track.stop());
+        state.exporting = false;
+        els.exportButton.disabled = false;
+        els.generateButton.disabled = false;
+        els.playButton.disabled = false;
+        const blob = new Blob(chunks, { type: mime });
+        if (state.downloadUrl) URL.revokeObjectURL(state.downloadUrl);
+        state.downloadUrl = URL.createObjectURL(blob);
+        els.downloadLink.href = state.downloadUrl;
+        els.downloadLink.download = 'marcelloart-clip-' + Date.now() + '.webm';
+        els.downloadLink.classList.add('is-visible');
+        els.video.currentTime = state.start;
+        drawFrame();
+        setStatus('Klip selesai dibuat dalam format WebM.', 'success');
+      };
+
+      els.videoInput.addEventListener('change', (event) => loadVideo(event.target.files[0]));
+      els.changeVideoButton.addEventListener('click', () => els.videoInput.click());
+      els.resetButton.addEventListener('click', resetProject);
+      ['dragenter', 'dragover'].forEach((eventName) => els.dropZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        els.dropZone.classList.add('is-dragover');
+      }));
+      ['dragleave', 'drop'].forEach((eventName) => els.dropZone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        els.dropZone.classList.remove('is-dragover');
+      }));
+      els.dropZone.addEventListener('drop', (event) => loadVideo(event.dataTransfer.files[0]));
+      els.video.addEventListener('loadedmetadata', onMetadata);
+      els.video.addEventListener('loadeddata', drawFrame);
+      els.video.addEventListener('timeupdate', updatePlaybackUI);
+      els.video.addEventListener('seeked', drawFrame);
+      els.video.addEventListener('error', () => setError('Video tidak dapat diputar oleh browser ini. Coba file MP4 H.264 atau WebM.'));
+      els.playButton.addEventListener('click', playPreview);
+      els.seekRange.addEventListener('input', () => {
+        els.video.currentTime = Number(els.seekRange.value);
+        drawFrame();
+      });
+      els.startRange.addEventListener('input', () => setRange(Number(els.startRange.value), state.end, true));
+      els.endRange.addEventListener('input', () => setRange(state.start, Number(els.endRange.value), false));
+      els.startNumber.addEventListener('change', () => setRange(Number(els.startNumber.value), state.end, true));
+      els.endNumber.addEventListener('change', () => setRange(state.start, Number(els.endNumber.value), false));
+      els.scanButton.addEventListener('click', scanVideo);
+      els.generateButton.addEventListener('click', makeAutomaticOverlay);
+      els.exportButton.addEventListener('click', exportClip);
+      [els.formatSelect, els.overlayStyle, els.overlayPosition, els.overlayInput, els.scriptInput, els.captionToggle, els.watermarkToggle].forEach((control) => {
+        control.addEventListener('input', () => { if (control === els.formatSelect) resizeCanvas(); else drawFrame(); });
+        control.addEventListener('change', () => { if (control === els.formatSelect) resizeCanvas(); else drawFrame(); });
+      });
+      window.addEventListener('beforeunload', () => {
+        if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+        if (state.downloadUrl) URL.revokeObjectURL(state.downloadUrl);
+      });
+      resizeCanvas();
+    })();
+  </script>
 </body>
 </html>
