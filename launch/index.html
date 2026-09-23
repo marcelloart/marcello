@@ -839,6 +839,7 @@
         candidates: [],
         videoFile: null,
         transcriber: null,
+        transcriberCpuOnly: false,
         captionCues: [],
         settingTranscript: false
       };
@@ -1214,7 +1215,7 @@
         transformers.env.allowLocalModels = false;
         transformers.env.useBrowserCache = true;
         const options = {
-          dtype: navigator.gpu ? 'fp16' : 'q8',
+          dtype: navigator.gpu && !state.transcriberCpuOnly ? 'fp16' : 'q8',
           progress_callback: (progress) => {
             if (progress && progress.status === 'progress' && Number.isFinite(progress.progress)) {
               setTranscribeStatus('Mengunduh model Whisper… ' + Math.round(progress.progress) + '%');
@@ -1223,11 +1224,12 @@
             }
           }
         };
-        if (navigator.gpu) options.device = 'webgpu';
+        if (navigator.gpu && !state.transcriberCpuOnly) options.device = 'webgpu';
         try {
           state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', options);
         } catch (error) {
-          if (!navigator.gpu) throw error;
+          if (!navigator.gpu || state.transcriberCpuOnly) throw error;
+          state.transcriberCpuOnly = true;
           setTranscribeStatus('WebGPU tidak tersedia untuk model ini. Beralih ke pemrosesan CPU…');
           state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', {
             dtype: 'q8',
@@ -1235,6 +1237,32 @@
           });
         }
         return state.transcriber;
+      };
+      const describeTranscriptionError = (error) => {
+        const message = String(error && error.message ? error.message : error || '').replace(/\s+/g, ' ').trim();
+        if (/decode|audio data|encodingerror|not supported/i.test(message)) {
+          return 'Browser tidak bisa membaca audio WebM ini. Coba Chrome atau Edge terbaru, atau ubah video ke MP4.';
+        }
+        if (/fetch|network|cors|failed to load|404|403|download/i.test(message)) {
+          return 'Model Whisper tidak berhasil diunduh. Periksa koneksi internet lalu coba lagi.';
+        }
+        if (/memory|allocation|out of memory|wasm|onnx|webgpu|gpu/i.test(message)) {
+          return 'Mesin AI browser kehabisan memori atau tidak kompatibel. Tutup tab lain lalu coba lagi.';
+        }
+        return message ? 'Detail: ' + message.slice(0, 180) : 'Coba Chrome atau Edge terbaru dan pastikan video memiliki suara.';
+      };
+      const transcribeAudio = async (audio, options) => {
+        let transcriber = await getTranscriber();
+        try {
+          return await transcriber(audio, options);
+        } catch (error) {
+          if (!navigator.gpu || state.transcriberCpuOnly) throw error;
+          state.transcriber = null;
+          state.transcriberCpuOnly = true;
+          setTranscribeStatus('GPU browser tidak kompatibel. Mengulang dengan CPU…');
+          transcriber = await getTranscriber();
+          return transcriber(audio, options);
+        }
       };
       const transcribeVideo = async () => {
         if (!state.videoFile || !state.duration || state.end <= state.start) {
@@ -1247,9 +1275,8 @@
         setTranscribeStatus('Membaca audio dari rentang klip…');
         try {
           const audio = await decodeSelectedAudio();
-          const transcriber = await getTranscriber();
           setTranscribeStatus('Mentranskripsikan suara secara lokal…');
-          const result = await transcriber(audio, {
+          const result = await transcribeAudio(audio, {
             return_timestamps: 'word',
             language: 'indonesian',
             task: 'transcribe',
@@ -1272,7 +1299,7 @@
           state.captionCues = [];
           state.settingTranscript = false;
           console.error(error);
-          setTranscribeStatus('Transkripsi gagal. Pastikan video memiliki suara dan gunakan Chrome atau Edge terbaru.', 'error');
+          setTranscribeStatus('Transkripsi gagal. ' + describeTranscriptionError(error), 'error');
         } finally {
           els.transcribeButton.disabled = false;
           els.generateButton.disabled = false;
