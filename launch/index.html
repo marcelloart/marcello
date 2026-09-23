@@ -1201,7 +1201,12 @@
         if (!AudioContextClass) throw new Error('Browser tidak memiliki AudioContext.');
         const audioContext = new AudioContextClass();
         try {
-          const arrayBuffer = await state.videoFile.arrayBuffer();
+          // Read from the blob URL already used by the video element. Some
+          // Android file providers invalidate the original File reference
+          // after the picker closes, while the object URL remains readable.
+          const response = await fetch(state.objectUrl);
+          if (!response.ok) throw new Error('File video tidak dapat dibaca ulang oleh browser.');
+          const arrayBuffer = await response.arrayBuffer();
           const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
           return resampleAudio(audioBuffer, state.start, state.end);
         } finally {
@@ -1240,6 +1245,9 @@
       };
       const describeTranscriptionError = (error) => {
         const message = String(error && error.message ? error.message : error || '').replace(/\s+/g, ' ').trim();
+        if (/requested file could not be read|notreadableerror|permission problems|file video tidak dapat dibaca ulang/i.test(message)) {
+          return 'Browser kehilangan akses ke file video. Upload ulang dari penyimpanan lokal perangkat, lalu coba lagi.';
+        }
         if (/decode|audio data|encodingerror|not supported/i.test(message)) {
           return 'Browser tidak bisa membaca audio WebM ini. Coba Chrome atau Edge terbaru, atau ubah video ke MP4.';
         }
