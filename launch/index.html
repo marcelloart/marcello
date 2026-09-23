@@ -567,6 +567,13 @@
     }
     .check-label input { width: 16px; height: 16px; accent-color: var(--cyan); }
     .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .transcribe-button { width: 100%; }
+    .transcribe-note {
+      margin: -3px 0 0;
+      color: #8195b5;
+      font-size: 11px;
+      line-height: 1.5;
+    }
     .status-line {
       min-height: 18px;
       color: #89a0c1;
@@ -748,8 +755,11 @@
                 <div class="field"><label for="overlayPosition">Posisi hook</label><select id="overlayPosition"><option value="top">Atas</option><option value="center">Tengah</option><option value="bottom">Bawah</option></select></div>
               </div>
               <div class="field"><label for="overlayInput">Judul atau hook overlay</label><input class="text-input" id="overlayInput" type="text" maxlength="90" placeholder="Contoh: Tunggu sampai bagian terakhir 👀"></div>
-              <div class="field"><label for="scriptInput">Naskah / caption otomatis (opsional)</label><textarea id="scriptInput" placeholder="Tempel transkrip atau tulis kalimat caption di sini. Sistem akan membaginya menjadi beberapa caption selama durasi klip."></textarea></div>
-              <label class="check-label"><input id="captionToggle" type="checkbox" checked> Tampilkan caption di bagian bawah</label>
+              <div class="field"><label for="scriptInput">Naskah / caption</label><textarea id="scriptInput" placeholder="Transkrip suara akan muncul di sini. Anda juga bisa menempelkan naskah secara manual."></textarea></div>
+              <button class="secondary-button transcribe-button" id="transcribeButton" type="button">🎙 Transkripsikan suara &amp; sinkronkan</button>
+              <p class="transcribe-note">Model Whisper berjalan lokal di browser. Video dan suara tidak diunggah, tetapi pemrosesan pertama dapat memerlukan waktu lebih lama.</p>
+              <div class="status-line" id="transcribeStatus" role="status"></div>
+              <label class="check-label"><input id="captionToggle" type="checkbox" checked> Tampilkan teks yang mengikuti suara</label>
               <label class="check-label"><input id="watermarkToggle" type="checkbox" checked> Tambahkan watermark MarcelloArt</label>
               <div class="button-row">
                 <button class="secondary-button" id="generateButton" type="button">✦ Buat otomatis</button>
@@ -807,6 +817,8 @@
         overlayPosition: $('#overlayPosition'),
         overlayInput: $('#overlayInput'),
         scriptInput: $('#scriptInput'),
+        transcribeButton: $('#transcribeButton'),
+        transcribeStatus: $('#transcribeStatus'),
         captionToggle: $('#captionToggle'),
         watermarkToggle: $('#watermarkToggle'),
         generateButton: $('#generateButton'),
@@ -824,7 +836,11 @@
         selectedCandidate: null,
         drawFrameId: 0,
         exporting: false,
-        candidates: []
+        candidates: [],
+        videoFile: null,
+        transcriber: null,
+        captionCues: [],
+        settingTranscript: false
       };
       const formats = {
         vertical: [720, 1280],
@@ -873,8 +889,18 @@
         context.arcTo(x, y, x + width, y, r);
         context.closePath();
       };
+      const activeCaptionCue = () => {
+        if (!els.captionToggle.checked || !state.captionCues.length) return null;
+        const time = els.video.currentTime || 0;
+        return state.captionCues.find((cue) => time >= cue.start && time <= cue.end) || null;
+      };
+      const currentOverlayText = () => {
+        const liveCue = activeCaptionCue();
+        if (liveCue) return liveCue.text;
+        return els.overlayInput.value.trim();
+      };
       const currentCaption = () => {
-        if (!els.captionToggle.checked) return '';
+        if (!els.captionToggle.checked || state.captionCues.length) return '';
         const text = els.scriptInput.value.trim();
         if (!text) return '';
         const parts = text.split(/\n+/).flatMap((part) => wrapText(part, 42)).filter(Boolean);
@@ -933,7 +959,7 @@
 
         const style = els.overlayStyle.value;
         const accent = style === 'pop' ? '#ffd45e' : style === 'clean' ? '#ffffff' : '#7cecff';
-        const overlay = els.overlayInput.value.trim();
+        const overlay = currentOverlayText();
         if (overlay) {
           const fontSize = Math.max(27, Math.round(w * .073));
           const lines = wrapText(overlay, w > 1000 ? 22 : 17);
@@ -1102,6 +1128,152 @@
         drawFrame();
         setStatus('Overlay dan caption dasar sudah dibuat. Silakan edit jika diperlukan.', 'success');
       };
+      const setTranscribeStatus = (message, type) => {
+        els.transcribeStatus.textContent = message || '';
+        els.transcribeStatus.className = 'status-line' + (type ? ' is-' + type : '');
+      };
+      const resampleAudio = (audioBuffer, startSeconds, endSeconds) => {
+        const targetRate = 16000;
+        const sourceRate = audioBuffer.sampleRate;
+        const start = clamp(Math.floor(startSeconds * sourceRate), 0, audioBuffer.length);
+        const end = clamp(Math.ceil(endSeconds * sourceRate), start, audioBuffer.length);
+        const sourceChannels = Array.from({length: audioBuffer.numberOfChannels}, (_, index) => audioBuffer.getChannelData(index));
+        const targetLength = Math.max(1, Math.floor((end - start) / sourceRate * targetRate));
+        const output = new Float32Array(targetLength);
+        for (let index = 0; index < targetLength; index += 1) {
+          const sourcePosition = start + index * sourceRate / targetRate;
+          const left = Math.floor(sourcePosition);
+          const fraction = sourcePosition - left;
+          let sample = 0;
+          sourceChannels.forEach((channel) => {
+            const a = channel[left] || 0;
+            const b = channel[left + 1] === undefined ? a : channel[left + 1];
+            sample += a + (b - a) * fraction;
+          });
+          output[index] = sample / Math.max(1, sourceChannels.length);
+        }
+        return output;
+      };
+      const buildCaptionCues = (chunks, offset) => {
+        const cues = [];
+        let current = null;
+        chunks.forEach((chunk) => {
+          const text = String(chunk.text || '').trim();
+          const timestamps = Array.isArray(chunk.timestamp) ? chunk.timestamp : [];
+          const start = Number(timestamps[0]);
+          const end = Number(timestamps[1]);
+          if (!text || !Number.isFinite(start)) return;
+          const absoluteStart = offset + start;
+          const absoluteEnd = offset + (Number.isFinite(end) && end > start ? end : start + .45);
+          const shouldBreak = !current ||
+            current.words >= 7 ||
+            absoluteEnd - current.start > 2.8 ||
+            /[.!?]$/.test(current.text);
+          if (shouldBreak) {
+            if (current) cues.push(current);
+            current = {start: absoluteStart, end: absoluteEnd, text, words: text.split(/\s+/).length};
+          } else {
+            current.text += ' ' + text;
+            current.end = absoluteEnd;
+            current.words += text.split(/\s+/).length;
+          }
+        });
+        if (current) cues.push(current);
+        return cues.map(({start, end, text}) => ({start, end, text}));
+      };
+      const buildFallbackCues = (text, start, end) => {
+        const parts = (String(text || '').replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]?/g) || []).map((part) => part.trim()).filter(Boolean);
+        if (!parts.length) return [];
+        const duration = Math.max(.2, end - start);
+        return parts.map((part, index) => ({
+          start: start + duration * index / parts.length,
+          end: start + duration * (index + 1) / parts.length,
+          text: part.trim()
+        }));
+      };
+      const decodeSelectedAudio = async () => {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) throw new Error('Browser tidak memiliki AudioContext.');
+        const audioContext = new AudioContextClass();
+        try {
+          const arrayBuffer = await state.videoFile.arrayBuffer();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          return resampleAudio(audioBuffer, state.start, state.end);
+        } finally {
+          await audioContext.close();
+        }
+      };
+      const getTranscriber = async () => {
+        if (state.transcriber) return state.transcriber;
+        setTranscribeStatus('Mengunduh model Whisper lokal untuk pertama kali…');
+        const transformers = await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0');
+        transformers.env.allowLocalModels = false;
+        transformers.env.useBrowserCache = true;
+        const options = {
+          dtype: navigator.gpu ? 'fp16' : 'q8',
+          progress_callback: (progress) => {
+            if (progress && progress.status === 'progress' && Number.isFinite(progress.progress)) {
+              setTranscribeStatus('Mengunduh model Whisper… ' + Math.round(progress.progress) + '%');
+            } else if (progress && progress.status === 'ready') {
+              setTranscribeStatus('Model Whisper siap. Menganalisis suara…');
+            }
+          }
+        };
+        if (navigator.gpu) options.device = 'webgpu';
+        try {
+          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', options);
+        } catch (error) {
+          if (!navigator.gpu) throw error;
+          setTranscribeStatus('WebGPU tidak tersedia untuk model ini. Beralih ke pemrosesan CPU…');
+          state.transcriber = await transformers.pipeline('automatic-speech-recognition', 'onnx-community/whisper-tiny', {
+            dtype: 'q8',
+            progress_callback: options.progress_callback
+          });
+        }
+        return state.transcriber;
+      };
+      const transcribeVideo = async () => {
+        if (!state.videoFile || !state.duration || state.end <= state.start) {
+          setTranscribeStatus('Upload video dan pilih rentang klip terlebih dahulu.', 'error');
+          return;
+        }
+        state.captionCues = [];
+        els.transcribeButton.disabled = true;
+        els.generateButton.disabled = true;
+        setTranscribeStatus('Membaca audio dari rentang klip…');
+        try {
+          const audio = await decodeSelectedAudio();
+          const transcriber = await getTranscriber();
+          setTranscribeStatus('Mentranskripsikan suara secara lokal…');
+          const result = await transcriber(audio, {
+            return_timestamps: 'word',
+            language: 'indonesian',
+            task: 'transcribe',
+            chunk_length_s: 30,
+            stride_length_s: 5
+          });
+          const chunks = Array.isArray(result && result.chunks) ? result.chunks : [];
+          state.captionCues = buildCaptionCues(chunks, state.start);
+          if (!state.captionCues.length && result && result.text) {
+            state.captionCues = buildFallbackCues(result.text, state.start, state.end);
+          }
+          if (!state.captionCues.length) throw new Error('Tidak ada ucapan yang terdeteksi.');
+          state.settingTranscript = true;
+          els.scriptInput.value = state.captionCues.map((cue) => cue.text).join('\n');
+          state.settingTranscript = false;
+          if (!els.overlayInput.value.trim()) els.overlayInput.value = state.captionCues[0].text;
+          drawFrame();
+          setTranscribeStatus('Selesai. Teks sekarang mengikuti suara pada video.', 'success');
+        } catch (error) {
+          state.captionCues = [];
+          state.settingTranscript = false;
+          console.error(error);
+          setTranscribeStatus('Transkripsi gagal. Pastikan video memiliki suara dan gunakan Chrome atau Edge terbaru.', 'error');
+        } finally {
+          els.transcribeButton.disabled = false;
+          els.generateButton.disabled = false;
+        }
+      };
       const loadVideo = (file) => {
         if (!file) return;
         if (!file.type.startsWith('video/')) {
@@ -1111,8 +1283,10 @@
         setError('');
         if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
         state.objectUrl = URL.createObjectURL(file);
+        state.videoFile = file;
         state.selectedCandidate = null;
         state.candidates = [];
+        state.captionCues = [];
         els.video.src = state.objectUrl;
         els.video.load();
         els.fileName.textContent = file.name;
@@ -1146,11 +1320,13 @@
         if (state.downloadUrl) URL.revokeObjectURL(state.downloadUrl);
         state.objectUrl = null;
         state.downloadUrl = null;
+        state.videoFile = null;
         state.duration = 0;
         state.start = 0;
         state.end = 0;
         state.selectedCandidate = null;
         state.candidates = [];
+        state.captionCues = [];
         state.exporting = false;
         els.video.pause();
         els.video.removeAttribute('src');
@@ -1164,6 +1340,7 @@
         els.suggestions.innerHTML = '<div class="empty-state">Upload video lalu tekan <b>Analisis video</b> untuk melihat beberapa kandidat klip.</div>';
         els.overlayInput.value = '';
         els.scriptInput.value = '';
+        setTranscribeStatus('', '');
         setStatus('', '');
         drawPlaceholder();
       };
@@ -1273,7 +1450,14 @@
       els.endNumber.addEventListener('change', () => setRange(state.start, Number(els.endNumber.value), false));
       els.scanButton.addEventListener('click', scanVideo);
       els.generateButton.addEventListener('click', makeAutomaticOverlay);
+      els.transcribeButton.addEventListener('click', transcribeVideo);
       els.exportButton.addEventListener('click', exportClip);
+      els.scriptInput.addEventListener('input', () => {
+        if (!state.settingTranscript && state.captionCues.length) {
+          state.captionCues = [];
+          setTranscribeStatus('Naskah diubah manual. Tekan transkripsi lagi jika ingin mengikuti suara.', '');
+        }
+      });
       [els.formatSelect, els.overlayStyle, els.overlayPosition, els.overlayInput, els.scriptInput, els.captionToggle, els.watermarkToggle].forEach((control) => {
         control.addEventListener('input', () => { if (control === els.formatSelect) resizeCanvas(); else drawFrame(); });
         control.addEventListener('change', () => { if (control === els.formatSelect) resizeCanvas(); else drawFrame(); });
