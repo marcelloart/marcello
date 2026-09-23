@@ -1032,6 +1032,10 @@
         let nextStart = clamp(Number(start) || 0, 0, Math.max(0, state.duration - minimum));
         let nextEnd = clamp(Number(end) || state.duration, Math.min(state.duration, nextStart + minimum), state.duration);
         if (nextEnd - nextStart < minimum) nextEnd = Math.min(state.duration, nextStart + minimum);
+        if (state.captionCues.length && (Math.abs(nextStart - state.start) > .01 || Math.abs(nextEnd - state.end) > .01)) {
+          state.captionCues = [];
+          setTranscribeStatus('Rentang berubah. Jalankan transkripsi lagi agar caption tetap sinkron.', '');
+        }
         state.start = Number(nextStart.toFixed(2));
         state.end = Number(nextEnd.toFixed(2));
         updateTimeline();
