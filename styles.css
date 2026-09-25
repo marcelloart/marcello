@@ -1191,3 +1191,71 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* Article related links: isolated from global .card rules */
 .article-related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 8px}.article-related-card{display:flex;min-width:0;min-height:132px;box-sizing:border-box;flex-direction:column;justify-content:flex-start;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(16,37,67,.88),rgba(8,24,45,.88));color:#f4f8ff;text-decoration:none;overflow:hidden;transition:transform .18s ease,border-color .18s ease,background .18s ease}.article-related-card:hover{transform:translateY(-2px);border-color:rgba(91,211,255,.45);background:linear-gradient(180deg,rgba(20,45,79,.96),rgba(9,29,54,.96))}.article-related-card strong{display:block;color:#fff;font-size:15px;line-height:1.35;text-decoration:none;overflow-wrap:anywhere}.article-related-card p{margin:9px 0 0!important;color:#aebed0!important;font-size:13px!important;line-height:1.5!important;text-decoration:none}.article-related-card:last-child strong{color:#7de5ff}@media(max-width:760px){.article-related-grid{grid-template-columns:1fr}.article-related-card{min-height:auto}}
+
+
+/* MarcelloArt animated template background v1 */
+body{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(75,124,255,.28),transparent 34rem),
+    radial-gradient(circle at 88% 10%,rgba(98,221,255,.14),transparent 30rem),
+    radial-gradient(circle at 52% 78%,rgba(138,92,255,.09),transparent 38rem),
+    linear-gradient(180deg,#071021 0,#050814 55%,#03050d 100%);
+  background-size:120% 120%,135% 135%,145% 145%,100% 100%;
+  background-position:0 0,100% 0,50% 100%,0 0;
+  animation:siteBackgroundDrift 24s ease-in-out infinite alternate;
+}
+body:before{
+  opacity:.86;
+  background-image:
+    radial-gradient(circle,rgba(98,221,255,.18) 0 1px,transparent 1.6px),
+    radial-gradient(circle,rgba(255,214,88,.12) 0 1px,transparent 1.5px),
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:170px 170px,230px 230px,54px 54px,54px 54px;
+  background-position:18px 26px,92px 74px,0 0,0 0;
+  animation:siteGridDrift 34s linear infinite;
+}
+body:after{
+  width:84vmax;
+  height:84vmax;
+  left:42%;
+  top:-55vmax;
+  background:
+    radial-gradient(circle at 28% 42%,rgba(98,221,255,.22),transparent 24%),
+    radial-gradient(circle at 70% 40%,rgba(75,124,255,.25),transparent 29%),
+    radial-gradient(circle at 48% 70%,rgba(150,91,255,.14),transparent 25%),
+    radial-gradient(circle at 58% 54%,rgba(255,214,88,.07),transparent 18%);
+  filter:blur(64px);
+  opacity:.9;
+  animation:siteAuroraFloat 18s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+}
+
+@keyframes siteBackgroundDrift{
+  0%{background-position:0 0,100% 0,50% 100%,0 0}
+  50%{background-position:8% 5%,92% 8%,45% 91%,0 0}
+  100%{background-position:14% 10%,86% 4%,56% 86%,0 0}
+}
+@keyframes siteGridDrift{
+  from{background-position:18px 26px,92px 74px,0 0,0 0}
+  to{background-position:188px 196px,-138px 304px,54px 54px,54px 54px}
+}
+@keyframes siteAuroraFloat{
+  0%{transform:translateX(-50%) translateY(0) rotate(-4deg) scale(1);opacity:.72}
+  50%{transform:translateX(-43%) translateY(9vh) rotate(5deg) scale(1.08);opacity:.92}
+  100%{transform:translateX(-55%) translateY(17vh) rotate(-2deg) scale(1.14);opacity:.78}
+}
+
+@media (max-width:720px){
+  body{animation-duration:34s}
+  body:before{opacity:.58;animation-duration:46s}
+  body:after{
+    width:108vmax;
+    height:108vmax;
+    top:-70vmax;
+    filter:blur(52px);
+    animation-duration:26s;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  body,body:before,body:after{animation:none!important}
+}
