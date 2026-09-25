@@ -3,7 +3,7 @@
 
   // Isi dengan Measurement ID GA4 (format G-XXXXXXXXXX) untuk mengaktifkan
   // pengiriman data. Event tetap masuk ke dataLayer sebelum ID ditambahkan.
-  const GA_MEASUREMENT_ID = '';
+  const GA_MEASUREMENT_ID = 'G-RJD6HYMCJV';
 
   window.dataLayer = window.dataLayer || [];
   function gtag(){ window.dataLayer.push(arguments); }
