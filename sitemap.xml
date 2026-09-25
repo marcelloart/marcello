@@ -12,7 +12,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://marcelloart.site/assets/blog/quake-champions-1-31-cover.svg</image:loc>
+      <image:loc>https://marcelloart.site/assets/blog/quake-champions-1-31-cover.webp</image:loc>
       <image:title>Blog Gaming MarcelloArt</image:title>
     </image:image>
   </url>
@@ -22,7 +22,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://marcelloart.site/assets/blog/valorant-patch-13-06-cover.svg</image:loc>
+      <image:loc>https://marcelloart.site/assets/blog/valorant-patch-13-06-cover.webp</image:loc>
       <image:title>VALORANT Patch 13.06</image:title>
     </image:image>
   </url>
@@ -38,7 +38,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://marcelloart.site/assets/blog/free-fire-naruto-ob55-cover.svg</image:loc>
+      <image:loc>https://marcelloart.site/assets/blog/free-fire-naruto-ob55-cover.webp</image:loc>
       <image:title>Free Fire x NARUTO SHIPPUDEN di OB55</image:title>
     </image:image>
   </url>
@@ -184,7 +184,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://marcelloart.site/assets/blog/quake-champions-1-31-cover.svg</image:loc>
+      <image:loc>https://marcelloart.site/assets/blog/quake-champions-1-31-cover.webp</image:loc>
       <image:title>Quake Champions 1.31</image:title>
     </image:image>
   </url>
