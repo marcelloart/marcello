@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Managed by GitHub Actions workflow: Keep sitemap in sync
 from pathlib import Path
 from datetime import date
 import re
