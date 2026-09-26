@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071124">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="canonical" href="https://marcelloart.site/blog/bagaimana-menguji-coin-rush-3d-android-checklist-closed-testing.html">
+<link rel="author" href="/about.html">
+<link rel="alternate" type="application/rss+xml" title="MarcelloArt Gaming &amp; Game News" href="https://marcelloart.site/rss.xml">
+<title>Bagaimana Kami Menguji Coin Rush 3D Sebelum Closed Testing — MarcelloArt</title>
+<meta name="description" content="Checklist pengujian Coin Rush 3D sebelum build Android dikirim ke closed testing: instalasi, kontrol, timer, rewarded ads, power-up, checkpoint, UI, performa, dan rilis.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="MarcelloArt">
+<meta property="og:title" content="Bagaimana Kami Menguji Coin Rush 3D Sebelum Closed Testing">
+<meta property="og:description" content="Proses nyata pengujian build Coin Rush 3D dari instalasi hingga rewarded ads, power-up, checkpoint, UI dan release check.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://marcelloart.site/blog/bagaimana-menguji-coin-rush-3d-android-checklist-closed-testing.html">
+<meta property="og:image" content="https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp">
+<meta property="og:image:width" content="960">
+<meta property="og:image:height" content="540">
+<meta property="og:image:alt" content="Gameplay Coin Rush 3D yang digunakan dalam proses pengujian">
+<meta property="og:site_name" content="MarcelloArt">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Checklist Pengujian Coin Rush 3D">
+<meta name="twitter:description" content="Cara MarcelloArt memeriksa build Android sebelum closed testing.">
+<meta name="twitter:image" content="https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp">
+<meta property="article:published_time" content="2026-09-26T09:46:00+07:00">
+<meta property="article:modified_time" content="2026-09-26T09:46:00+07:00">
+<meta property="article:section" content="Development">
+<link rel="stylesheet" href="/styles.css?v=20260925-anim1">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://marcelloart.site/#organization","name":"MarcelloArt","url":"https://marcelloart.site/","sameAs":["https://github.com/marcelloart"]},
+{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Beranda","item":"https://marcelloart.site/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://marcelloart.site/blog/"},{"@type":"ListItem","position":3,"name":"Checklist Pengujian Coin Rush 3D","item":"https://marcelloart.site/blog/bagaimana-menguji-coin-rush-3d-android-checklist-closed-testing.html"}]},
+{"@type":"BlogPosting","headline":"Bagaimana Kami Menguji Coin Rush 3D Sebelum Closed Testing","description":"Checklist pengujian build Android Coin Rush 3D sebelum dikirim ke closed testing.","image":{"@type":"ImageObject","url":"https://marcelloart.site/assets/gameplay/coin-rush-gameplay.webp","width":960,"height":540},"datePublished":"2026-09-26T09:46:00+07:00","dateModified":"2026-09-26T09:46:00+07:00","author":{"@id":"https://marcelloart.site/#organization"},"publisher":{"@id":"https://marcelloart.site/#organization"},"mainEntityOfPage":"https://marcelloart.site/blog/bagaimana-menguji-coin-rush-3d-android-checklist-closed-testing.html","articleSection":"Development","inLanguage":"id-ID"}
+]}</script>
+</head>
+<body>
+<nav class="nav"><div class="wrap nav-inner"><a class="brand" href="/"><span class="brand-mark">★</span><span>MarcelloArt<small>GAME STUDIO</small></span></a><div class="nav-links"><a href="/">Beranda</a><a class="active keep" href="/blog/">Blog</a><a href="/status-pengujian.html">Status</a><a href="/about.html">Tentang</a><a class="keep" href="/feedback.html">Dukungan</a></div></div></nav>
+<main class="wrap">
+<header class="article-header">
+<div class="breadcrumbs"><a href="/">Beranda</a><span>›</span><a href="/blog/">Blog</a><span>›</span><span>Development</span></div>
+<span class="eyebrow" style="margin-top:22px">COIN RUSH 3D · DEVELOPMENT</span>
+<h1>Bagaimana Kami Menguji Coin Rush 3D Sebelum Closed Testing</h1>
+<p class="lead">Sebelum sebuah AAB dikirim ke Google Play, kami tidak hanya memeriksa apakah game bisa dibuka. Build perlu melewati rangkaian pengecekan gameplay, UI, iklan rewarded, progres, performa, dan kompatibilitas Android.</p>
+<div class="article-meta"><span>26 September 2026</span><span>•</span><span><a href="/about.html" rel="author">MarcelloArt</a></span><span>•</span><span>10 menit baca</span></div>
+</header>
+<div class="article-featured-image"><img src="/assets/gameplay/coin-rush-gameplay.webp" alt="Gameplay Coin Rush 3D untuk pengujian build Android" width="960" height="540" fetchpriority="high" decoding="async"></div>
+<section class="article-body"><article class="article">
+<p>Closed testing membantu menemukan masalah yang tidak selalu terlihat ketika build hanya dijalankan satu kali di perangkat developer. Coin Rush 3D memiliki banyak sistem yang saling terhubung: timer, nyawa, koin, obstacle, checkpoint, power-up, shop, outfit, misi, achievement, hadiah harian, rewarded ads, pilihan grafis, serta layout portrait dan landscape. Karena itu, satu perubahan kecil dapat memengaruhi bagian lain.</p>
+<p>Artikel ini menjelaskan checklist yang dipakai MarcelloArt ketika menilai apakah sebuah build cukup stabil untuk diteruskan ke pengujian Google Play. Tujuannya bukan untuk mengatakan bahwa setiap perangkat pasti bebas bug, tetapi untuk membuat proses pemeriksaan lebih konsisten dan memudahkan tester melaporkan masalah yang masih tersisa.</p>
+
+<div class="article-callout"><strong>Prinsip utama:</strong> sebuah build dianggap lebih siap ketika alur penting dapat diselesaikan berulang kali tanpa freeze, kehilangan progres yang tidak semestinya, layout rusak, atau reward yang tidak sesuai dengan tindakan pemain.</div>
+
+<h2>1. Instalasi, update, dan first launch</h2>
+<p>Pemeriksaan dimulai sebelum gameplay. Build harus dapat dipasang dari jalur pengujian yang benar dan aplikasi harus bisa dibuka setelah instalasi atau update. Kami juga memperhatikan apakah perubahan versionCode benar-benar membuat Google Play mengenali build baru sebagai pembaruan, bukan aplikasi yang berbeda.</p>
+<p>Pada first launch, kami memeriksa apakah menu utama tampil utuh, tidak ada area putih yang tidak semestinya, tidak ada elemen UI yang berada di luar safe area, dan game tidak berhenti pada loading screen. Masalah seperti blank bar di bagian atas layar pernah menjadi fokus perbaikan karena Android modern menerapkan perilaku edge-to-edge yang berbeda dari versi lama.</p>
+
+<h2>2. Portrait dan landscape</h2>
+<p>Coin Rush 3D dapat digunakan pada ukuran dan orientasi layar yang berbeda. Karena itu, tombol penting seperti Mulai, Hadiah Harian, Shop, Pause, dan elemen status tidak cukup hanya terlihat benar pada satu rasio layar.</p>
+<p>Kami memutar orientasi dan memeriksa apakah tombol tetap berada di posisi yang masuk akal, teks tidak bertumpuk, panel tidak terpotong, serta area sentuh masih mudah digunakan. Jika sebuah tombol terlihat lurus di portrait tetapi bergeser jauh di landscape, itu dianggap masalah UI walaupun gameplay masih berjalan.</p>
+
+<h2>3. Kontrol karakter dan kamera</h2>
+<p>Kontrol adalah bagian yang langsung terasa oleh pemain. Kami memeriksa respons analog atau input gerak, perubahan arah, pergerakan mendekati obstacle, dan apakah kamera tetap membantu pemain membaca jalur di depan. Perubahan visual tidak boleh membuat kontrol terasa lebih sulit hanya karena kamera terlalu dekat, sudut berubah drastis, atau elemen lingkungan menutup pandangan.</p>
+<p>Pengujian kontrol juga dilakukan pada situasi yang lebih padat, bukan hanya area awal yang kosong. Tujuannya adalah memastikan pemain masih dapat mengambil keputusan ketika ada koin, rintangan, dan kebutuhan berpindah jalur dalam waktu singkat.</p>
+
+<h2>4. Koin dan collision</h2>
+<p>Koin harus mudah terlihat dan terambil ketika karakter benar-benar menyentuh area collision-nya. Pada pengembangan sebelumnya, ukuran visual koin pernah diperbesar karena sebagian koin terlalu mudah tertutup rumput atau objek lain. Perubahan semacam itu perlu diuji dari dua sisi: visualnya lebih terbaca, tetapi collision dan posisi spawn tetap harus konsisten.</p>
+<p>Kami juga mengamati apakah saldo bertambah satu kali per koin, apakah target level menghitung dengan benar, dan apakah Magnet tetap menarik koin tanpa membuat pickup dihitung ganda.</p>
+
+<h2>5. Rintangan, nyawa, dan kondisi kalah</h2>
+<p>Ketika karakter mengenai obstacle, game harus memberikan konsekuensi yang sesuai. Jika nyawa habis, pemain tidak boleh dibiarkan dalam kondisi freeze tanpa panel lanjut, restart, atau alur yang jelas.</p>
+<p>Bagian ini diuji berulang kali karena bug transisi sering muncul setelah kondisi ekstrem: nyawa habis bersamaan dengan timer, karakter mengenai obstacle ketika shield hampir selesai, atau level berakhir pada saat animasi tertentu masih berjalan.</p>
+
+<h2>6. Timer dan rewarded ads</h2>
+<p>Rewarded ads hanya berguna jika reward yang dijanjikan benar-benar diberikan. Untuk tambahan waktu, kami memeriksa angka sebelum iklan, menyelesaikan rewarded ad, lalu memastikan waktu bertambah sesuai nilai yang dijanjikan. Salah satu bug yang pernah diperbaiki adalah tambahan waktu yang seharusnya 15 detik tetapi pada praktiknya terasa lebih pendek.</p>
+<p>Kami juga memeriksa kondisi ketika iklan tidak tersedia atau pemain menutup alur sebelum reward sah diberikan. Gameplay tidak boleh rusak hanya karena jaringan atau inventory iklan tidak memberikan respons yang diharapkan.</p>
+
+<h2>7. Shield, Magnet, Time Boost, dan Extra Life</h2>
+<p>Power-up diuji satu per satu serta dalam kombinasi. Shield, misalnya, harus mengikuti durasi yang ditampilkan. Jika masih ada waktu tersisa, terkena satu rintangan tidak boleh langsung menghapus shield bila desain saat ini memang berbasis durasi.</p>
+<p>Magnet diuji terhadap jarak pickup dan beberapa koin berdekatan. Time Boost diperiksa terhadap timer. Extra Life diperiksa pada kondisi ketika nyawa hampir habis. Pengujian gabungan penting karena masalah sering tidak muncul ketika sistem diuji sendirian.</p>
+
+<h2>8. Checkpoint dan perpindahan level</h2>
+<p>Coin Rush 3D memiliki checkpoint challenge setiap 10 level sampai level 100. Karena itu, kami tidak hanya menguji level 1 lalu berhenti. Perpindahan menuju level berikutnya, checkpoint, serta kondisi selesai perlu diperiksa agar progres tidak terhenti di tengah.</p>
+<p>Freeze setelah menyelesaikan level pertama pernah menjadi contoh mengapa pengujian transisi penting. Sebuah level dapat berjalan sempurna, tetapi bug baru terlihat tepat ketika game harus memuat state berikutnya.</p>
+
+<h2>9. Shop, outfit, dan tampilan karakter</h2>
+<p>Shop diuji dari sisi fungsi dan visual. Pembelian harus mengurangi saldo dengan benar, item yang sudah dimiliki tidak boleh dibeli berulang tanpa alasan, dan outfit yang dipilih harus benar-benar terpasang pada karakter.</p>
+<p>Visual karakter juga diperiksa dari beberapa sudut. Pakaian yang melayang, rambut yang terpisah dari kepala, atau bagian outfit yang tidak mengikuti tubuh dianggap masalah kualitas walaupun tidak menyebabkan crash.</p>
+
+<h2>10. Misi, achievement, dan daily reward</h2>
+<p>Sistem progres jangka panjang diperiksa dengan tindakan yang benar-benar memicu target. Jika misi meminta pemain mengumpulkan koin atau menyelesaikan level, progresnya harus bertambah setelah aksi tersebut. Daily reward juga perlu mencegah klaim berulang pada periode yang sama dan memberi item sesuai yang ditampilkan.</p>
+<p>Bagian ini penting karena bug reward dapat merusak ekonomi game tanpa langsung menyebabkan error yang terlihat.</p>
+
+<h2>11. Pilihan grafis dan performa</h2>
+<p>Preset Rendah, Sedang, dan Tinggi harus benar-benar mengubah beban visual tanpa merusak gameplay. Kami memeriksa apakah perubahan preset diterapkan, apakah lingkungan tetap terbaca, dan apakah perangkat yang lebih terbatas masih mendapat opsi yang lebih ringan.</p>
+<p>Closed testing tetap dibutuhkan karena satu perangkat tidak mewakili seluruh ekosistem Android. Chipset, RAM, refresh rate, driver GPU, rasio layar, dan versi Android dapat menghasilkan perilaku yang berbeda.</p>
+
+<h2>12. Release check sebelum AAB</h2>
+<p>Sebelum build dianggap siap dikirim, versi dan versionCode diperiksa kembali, konfigurasi rilis dibandingkan dengan build sebelumnya, dan bagian yang berhubungan dengan Android modern ditinjau. Untuk Coin Rush 3D, pemeriksaan ini termasuk edge-to-edge, layout, resource shrinking/R8, serta memastikan fitur utama tidak hilang pada release build.</p>
+<p>Kami juga membedakan debug APK untuk pemeriksaan cepat dengan AAB yang nantinya diunggah ke Google Play. Build yang berjalan di editor atau debug belum otomatis berarti release bundle akan berperilaku persis sama.</p>
+
+<h2>Apa yang masih perlu dilakukan tester?</h2>
+<p>Internal testing tidak dapat meniru semua kombinasi perangkat. Karena itu, tester sangat membantu terutama untuk masalah yang hanya muncul pada model HP tertentu, versi Android tertentu, rasio layar tertentu, atau kondisi jaringan tertentu.</p>
+<p>Laporan bug paling berguna jika menyertakan perangkat, versi Android, level, langkah sebelum masalah terjadi, apakah masalah bisa diulang, dan screenshot bila relevan. Informasi tersebut jauh lebih membantu daripada pesan singkat seperti “game error” karena developer dapat mencoba mereproduksi kondisi yang sama.</p>
+
+<h2>Mengapa checklist ini dipublikasikan?</h2>
+<p>MarcelloArt ingin dokumentasi pengembangan menjadi bagian dari website, bukan hanya halaman promosi. Dengan menjelaskan apa yang diuji dan mengapa, pemain dapat memahami status game dengan lebih jelas dan tester dapat memberikan laporan yang lebih terarah.</p>
+<p>Build yang lolos checklist bukan berarti sempurna. Artinya, alur utama sudah diperiksa secara sistematis dan masalah yang diketahui dapat diprioritaskan sebelum rilis berikutnya.</p>
+
+<div class="article-callout"><strong>Lihat status terbaru:</strong> buka <a href="/status-pengujian.html">Status Pengujian Coin Rush 3D</a>. Jika ingin membantu menguji, gunakan halaman <a href="/pengujian-tertutup.html">Closed Testing</a>. Untuk laporan bug, gunakan <a href="/feedback.html">Masukan &amp; Dukungan</a>.</div>
+<div class="article-callout editorial-transparency-note"><strong>Tentang artikel ini:</strong> Artikel ini mendokumentasikan proses pengujian proyek MarcelloArt sendiri. Tidak ada testimoni atau hasil perangkat yang dibuat-buat. Lihat <a href="/editorial-policy.html"><strong>Pedoman Editorial &amp; Koreksi</strong></a> untuk metode penulisan dan cara mengirim koreksi.</div>
+</article></section>
+<section class="article-extras"><aside class="article-related"><div class="article-extra-heading"><span class="eyebrow">LANJUT MEMBACA</span><h2>Baca Juga Artikel Lainnya</h2></div><div class="article-related-grid">
+<a class="article-related-card" href="/blog/coin-rush-3d-update-v1-0-3-android-15.html"><span class="article-related-kicker">UPDATE</span><h3>Coin Rush 3D v1.0.3</h3><p>Perbaikan Android modern, UI dan stabilitas build.</p></a>
+<a class="article-related-card" href="/blog/cara-mengatasi-coin-rush-3d-tidak-bisa-diinstal-update-android.html"><span class="article-related-kicker">TROUBLESHOOTING</span><h3>Masalah Instalasi &amp; Update</h3><p>Langkah pemeriksaan ketika build tidak bisa dipasang atau diperbarui.</p></a>
+<a class="article-related-card" href="/status-pengujian.html"><span class="article-related-kicker">STATUS</span><h3>Status Pengujian</h3><p>Lihat fokus testing dan perbaikan yang sudah diverifikasi.</p></a>
+</div></aside></section>
+</main>
+<footer class="footer"><div class="wrap footer-row"><div>© 2026 MarcelloArt · Coin Rush 3D</div><div class="footer-links"><a href="/">Beranda</a><a href="/blog/">Blog</a><a href="/about.html">Tentang</a><a href="/contact.html">Kontak</a><a href="/editorial-policy.html">Editorial</a><a href="/privacy-policy.html">Privasi</a><a href="/terms-of-service.html">Ketentuan</a><a href="/disclaimer.html">Disclaimer</a></div></div></footer>
+<script src="/analytics.js?v=20260920-1" defer></script>
+<script src="/site-ui.js?v=20260920-3" defer></script>
+</body>
+</html>
