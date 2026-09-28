@@ -25,6 +25,7 @@ jobs:
         run: |
           set -e
           for name in \
+            apex-legends-javelin-anticheat-cover \
             quake-champions-1-31-cover \
             valorant-patch-13-06-cover \
             free-fire-naruto-ob55-cover \
