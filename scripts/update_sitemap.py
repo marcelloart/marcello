@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Managed by GitHub Actions workflow: Keep sitemap in sync
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
 from html import unescape
 import re
@@ -28,12 +28,15 @@ def iq(tag):
 def git_lastmod(path):
     try:
         out = subprocess.check_output(
-            ["git", "log", "-1", "--format=%cs", "--", str(path)],
+            ["git", "log", "-1", "--format=%cI", "--", str(path)],
             text=True,
         ).strip()
-        return out or date.today().isoformat()
+        if out:
+            committed = datetime.fromisoformat(out.replace("Z", "+00:00"))
+            return committed.astimezone(timezone.utc).date().isoformat()
+        return datetime.now(timezone.utc).date().isoformat()
     except Exception:
-        return date.today().isoformat()
+        return datetime.now(timezone.utc).date().isoformat()
 
 
 def first_match(pattern, text):
