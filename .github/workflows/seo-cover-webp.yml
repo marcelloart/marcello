@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/seo-cover-webp.yml"
+      - "assets/blog/*-cover.svg"
 
 permissions:
   contents: write
@@ -23,7 +24,16 @@ jobs:
       - name: Convert SVG covers to WebP
         run: |
           set -e
-          for name in             quake-champions-1-31-cover             valorant-patch-13-06-cover             free-fire-naruto-ob55-cover
+          for name in \
+            quake-champions-1-31-cover \
+            valorant-patch-13-06-cover \
+            free-fire-naruto-ob55-cover \
+            roblox-lag-android-cover \
+            coin-rush-3d-testing-steps-cover \
+            coin-rush-3d-checkpoint-strategy-cover \
+            coin-rush-3d-graphics-settings-cover \
+            coin-rush-3d-coins-outfits-cover \
+            coin-rush-3d-missions-rewards-cover
           do
             rsvg-convert -w 1200 -h 675 "assets/blog/${name}.svg" -o "/tmp/${name}.png"
             cwebp -quiet -q 82 "/tmp/${name}.png" -o "assets/blog/${name}.webp"

@@ -5,7 +5,9 @@ on:
     branches:
       - main
     paths:
+      - "*.html"
       - "blog/**/*.html"
+      - "**/*.html"
       - "scripts/update_sitemap.py"
   workflow_dispatch:
 
