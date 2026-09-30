@@ -1,0 +1,20 @@
+name = "marcelloart-shortlink"
+main = "src/index.mjs"
+compatibility_date = "2026-09-30"
+workers_dev = false
+
+[vars]
+SITE_ORIGIN = "https://marcelloart.site"
+SHORT_BASE_URL = "https://go.marcelloart.site"
+TURNSTILE_HOSTNAME = "marcelloart.site"
+TURNSTILE_SITE_KEY = "REPLACE_WITH_TURNSTILE_SITE_KEY"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "marcelloart-shortlinks"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+[[routes]]
+pattern = "go.marcelloart.site"
+custom_domain = true
