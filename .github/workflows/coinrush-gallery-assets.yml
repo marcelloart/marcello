@@ -1,0 +1,50 @@
+name: Import Coin Rush 3D gallery assets
+on:
+  push:
+    paths:
+      - '.github/workflows/coinrush-gallery-assets.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  gallery-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download five approved promo images
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/coinrush-promos assets/gameplay
+          curl --fail --location --silent --show-error --retry 3 --max-time 75 'https://pikaso.cdnpk.net/private/production/5676618368/3702088887.png?token=exp=1791849600~hmac=10ef5f43a2fb773512a6ae727ed9b16aa21c70ed6225c3d6e089a1eaff3f247d' --output '/tmp/coinrush-promos/menu.png'
+          curl --fail --location --silent --show-error --retry 3 --max-time 75 'https://pikaso.cdnpk.net/private/production/5676631724/3702095291.png?token=exp=1791849600~hmac=4b3703a914d0ebe1ff4ed69e240dadb62fc5b7b364f3257ac58c8843c9b05807' --output '/tmp/coinrush-promos/missions.png'
+          curl --fail --location --silent --show-error --retry 3 --max-time 75 'https://pikaso.cdnpk.net/private/production/5676633599/3702096107.png?token=exp=1791849600~hmac=36fa91b53b27437554226c42688c652bf9e0fea71e17f54ee9c01754e0f0ed53' --output '/tmp/coinrush-promos/daily.png'
+          curl --fail --location --silent --show-error --retry 3 --max-time 75 'https://pikaso.cdnpk.net/private/production/5676635444/3702097021.png?token=exp=1791849600~hmac=ad38a62f44c7527cf7cbe32f15eb68d92ab02281b114b391a3e59ff0b0bb5f8c' --output '/tmp/coinrush-promos/power.png'
+          curl --fail --location --silent --show-error --retry 3 --max-time 75 'https://pikaso.cdnpk.net/private/production/5676637957/3702098185.png?token=exp=1791849600~hmac=0dda038c28f949068f847a4ae4d1b5e078f4c1700b9804067eb869fa13d003c8' --output '/tmp/coinrush-promos/outfit.png'
+          file /tmp/coinrush-promos/*.png
+      - name: Convert to optimized locally hosted WebP
+        run: |
+          python -m pip install --quiet Pillow
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          for name in ('menu','missions','daily','power','outfit'):
+              im = Image.open(f'/tmp/coinrush-promos/{name}.png').convert('RGB')
+              if im.width > 900:
+                  im.thumbnail((900, 1600), Image.Resampling.LANCZOS)
+              out = Path('assets/gameplay') / f'coinrush-vc69-{name}.webp'
+              im.save(out, 'WEBP', quality=84, method=6)
+              print(name, im.size, out.stat().st_size)
+          PY
+      - name: Commit the five optimized website images
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/gameplay/coinrush-vc69-*.webp
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add five Coin Rush 3D production promo gallery images'
+          git pull --rebase origin main
+          git push origin HEAD:main
