@@ -1259,3 +1259,15 @@ body:after{
 @media (prefers-reduced-motion:reduce){
   body,body:before,body:after{animation:none!important}
 }
+
+
+/* Coin Rush 3D - public launch promo image gallery (VC69) */
+.gameplay-frame.gameplay-carousel .gameplay-slide.is-promo-slide figcaption{display:none}
+.coinrush-promo-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:start;margin-top:24px}
+.coinrush-promo{margin:0;min-width:0;border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#10254d,#050d23);box-shadow:0 16px 38px rgba(0,0,0,.24)}
+.coinrush-promo img{display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:cover}
+.coinrush-promo figcaption{font-size:13px;font-weight:700;color:#eef5ff;text-align:center;padding:13px 6px}
+.coinrush-gallery-note{text-align:center;font-size:14px;color:#b8cce6;margin-top:20px}
+.coinrush-gallery-note a{color:#ffd65c;font-weight:800}
+@media(max-width:850px){.coinrush-promo-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}}
+@media(max-width:520px){.coinrush-promo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.coinrush-promo{border-radius:13px}.coinrush-promo figcaption{font-size:12px;padding:10px 5px}}
