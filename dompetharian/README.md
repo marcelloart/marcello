@@ -19,3 +19,5 @@ Referensi yang diperiksa:
 - https://developers.google.com/admob/android/privacy/play-data-disclosure
 
 Kontak mengikuti email developer yang sudah tertera pada contact.html: marcelloartis@gmail.com.
+
+Pemeriksaan URL publik menemukan beacon Cloudflare Web Analytics yang otomatis disisipkan infrastruktur hosting. Kebijakan privasi DompetHarian dan kebijakan situs umum menjelaskan pengukuran kunjungan/performa tersebut. Tidak menonaktifkan atau mengubah konfigurasi analitik hosting. Referensi: https://developers.cloudflare.com/web-analytics/data-metrics/dimensions/ dan https://developers.cloudflare.com/web-analytics/about/.
