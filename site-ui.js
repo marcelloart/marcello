@@ -22,7 +22,7 @@
     const primaryItems = [
       ['Beranda', '/'],
       ['Game', '/coin-rush-3d/'],
-      ['DompetHarian', '/dompetharian/'],
+      ['Dompet Harian', '/dompetharian/'],
       ['Blog', '/blog/']
     ];
 
@@ -94,7 +94,7 @@
     if (footerLinks) {
       footerLinks.innerHTML = [
         ['Game','/coin-rush-3d/'],
-        ['DompetHarian','/dompetharian/'],
+        ['Dompet Harian','/dompetharian/'],
         ['Blog','/blog/'],
         ['Tentang','/about.html'],
         ['Kontak','/contact.html'],

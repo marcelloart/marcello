@@ -1,6 +1,6 @@
-# Halaman resmi DompetHarian
+# Halaman resmi Dompet Harian
 
-Diperbarui 20 Oktober 2026 sesuai aplikasi uji 0.4.5. Halaman HTML statis diterbitkan melalui GitHub Pages yang sudah dipakai situs ini. Tidak memerlukan build, backend, analytics baru, atau perubahan DNS/CNAME.
+Diperbarui 20 Oktober 2026 sesuai aplikasi uji 0.4.6. Halaman HTML statis diterbitkan melalui GitHub Pages yang sudah dipakai situs ini. Tidak memerlukan build, backend, analytics baru, atau perubahan DNS/CNAME.
 
 URL OAuth / Play Console:
 
@@ -9,7 +9,7 @@ URL OAuth / Play Console:
 - Terms: https://marcelloart.site/dompetharian/ketentuan/
 - Authorized domain: marcelloart.site
 
-Gambar berasal dari ikon dan screenshot emulator aplikasi milik proyek DompetHarian. Data contoh pengujian diberi caption. Tidak ada link Play Store atau klaim publikasi karena aplikasi masih diuji. Halaman baru tidak memasang analytics.js atau SDK iklan website. Link kebijakan umum tetap dipertahankan untuk layanan MarcelloArt lain.
+Gambar berasal dari ikon dan screenshot emulator aplikasi milik proyek Dompet Harian. Data contoh pengujian diberi caption. Tidak ada link Play Store atau klaim publikasi karena aplikasi masih diuji. Halaman baru tidak memasang analytics.js atau SDK iklan website. Link kebijakan umum tetap dipertahankan untuk layanan MarcelloArt lain.
 
 Cocokkan kebijakan jika menambah backend, Firebase Analytics, metode monetisasi, scope Google atau mekanisme penghapusan baru. Kebijakan website tidak mengubah setelan OAuth, mendaftarkan test users, memverifikasi domain, atau memasang tautan kebijakan pada APK. Tautan kebijakan perlu dipasang dalam build aplikasi sebelum rilis publik.
 
@@ -20,4 +20,4 @@ Referensi yang diperiksa:
 
 Kontak mengikuti email developer yang sudah tertera pada contact.html: marcelloartis@gmail.com.
 
-Pemeriksaan URL publik menemukan beacon Cloudflare Web Analytics yang otomatis disisipkan infrastruktur hosting. Kebijakan privasi DompetHarian dan kebijakan situs umum menjelaskan pengukuran kunjungan/performa tersebut. Tidak menonaktifkan atau mengubah konfigurasi analitik hosting. Referensi: https://developers.cloudflare.com/web-analytics/data-metrics/dimensions/ dan https://developers.cloudflare.com/web-analytics/about/.
+Pemeriksaan URL publik menemukan beacon Cloudflare Web Analytics yang otomatis disisipkan infrastruktur hosting. Kebijakan privasi Dompet Harian dan kebijakan situs umum menjelaskan pengukuran kunjungan/performa tersebut. Tidak menonaktifkan atau mengubah konfigurasi analitik hosting. Referensi: https://developers.cloudflare.com/web-analytics/data-metrics/dimensions/ dan https://developers.cloudflare.com/web-analytics/about/.
