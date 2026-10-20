@@ -1,6 +1,6 @@
 # Halaman resmi DompetHarian
 
-Diperbarui 20 Oktober 2026 sesuai aplikasi uji 0.4.5. Halaman HTML statis diterbitkan melalui GitHub Pages yang sudah dipakai situs ini. Tidak memerlukan build, backend, analytics baru, atau perubahan DNS/CNAME.
+Diperbarui 20 Oktober 2026 sesuai aplikasi uji 0.4.6. Halaman HTML statis diterbitkan melalui GitHub Pages yang sudah dipakai situs ini. Tidak memerlukan build, backend, analytics baru, atau perubahan DNS/CNAME.
 
 URL OAuth / Play Console:
 
@@ -11,7 +11,7 @@ URL OAuth / Play Console:
 
 Gambar berasal dari ikon dan screenshot emulator aplikasi milik proyek DompetHarian. Data contoh pengujian diberi caption. Tidak ada link Play Store atau klaim publikasi karena aplikasi masih diuji. Halaman baru tidak memasang analytics.js atau SDK iklan website. Link kebijakan umum tetap dipertahankan untuk layanan MarcelloArt lain.
 
-Cocokkan kebijakan jika menambah backend, Firebase Analytics, metode monetisasi, scope Google atau mekanisme penghapusan baru. Kebijakan website tidak mengubah setelan OAuth, mendaftarkan test users, memverifikasi domain, atau memasang tautan kebijakan pada APK. Tautan kebijakan perlu dipasang dalam build aplikasi sebelum rilis publik.
+Cocokkan kebijakan jika menambah backend, Firebase Analytics, metode monetisasi, scope Google atau mekanisme penghapusan baru. Versi 0.4.6 menghapus login dan cadangan otomatis Drive. Kebijakan dan ketentuan tetap pada URL yang sama dan ditautkan dari Privasi & keamanan dalam aplikasi. Ekspor file tetap manual. Salinan perangkat hilang saat uninstall/Hapus data.
 
 Referensi yang diperiksa:
 - https://developers.google.com/identity/protocols/oauth2/production-readiness/brand-verification
