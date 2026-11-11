@@ -160,3 +160,8 @@ smartadserver.com, 4625, RESELLER, 060d053dcf45cbf3
 smartadserver.com, 5294, RESELLER, 060d053dcf45cbf3
 smartadserver.com, 4456, RESELLER
 smartadserver.com, 3964, RESELLER
+
+# Additional authorized Unity Ads sellers shown in Unity Monetization
+monetrix.ai, 10761, RESELLER
+playdigo.com, 1965, RESELLER
+start.io, 131192070, RESELLER
